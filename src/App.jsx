@@ -1,11 +1,16 @@
-import React from 'react'
+import React from 'react';
+import './App.css';
+
+import Header from './Components/Header/Header';
 
 const App = () => {
   return (
-    <>
-    
-    </>
-  )
-}
 
-export default App
+      <Header />
+ 
+      
+ 
+  );
+};
+
+export default App;

@@ -1,0 +1,108 @@
+/* Contenedor principal del Header */
+.header-container {
+    background-color: var(--background-color1); /* Fondo azul */
+    color: var(--secondary-text-color); /* Texto blanco */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Toolbar del Header */
+.header-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+/* Logo del Header */
+.header-logo {
+    background-color: var(--background-color2); /* Fondo amarillo */
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-family-primary); /* Fuente Montserrat */
+    font-size: var(--font-size-base); /* Tamaño base */
+    font-weight: bold;
+    color: var(--third-text-color); /* Texto negro */
+}
+
+/* Menú de navegación */
+.header-nav {
+    display: flex;
+    gap: 20px;
+}
+
+.header-link {
+    font-family: var(--font-family-secondary); /* Fuente Lato */
+    font-size: var(--font-size-base); /* Tamaño base */
+    color: var(--secondary-text-color); /* Texto blanco */
+    text-decoration: none; /* Elimina el subrayado */
+    padding: 10px 0;
+    transition: color 0.3s ease;
+}
+
+.header-link:hover {
+    color: var(--background-color2); /* Cambia a amarillo al pasar el mouse */
+}
+
+/* Botón de acción */
+.header-button {
+    background-color: var(--background-color2); /* Fondo amarillo */
+    color: var(--third-text-color); /* Texto negro */
+    font-family: var(--font-family-primary); /* Fuente Montserrat */
+    font-size: var(--font-size-base); /* Tamaño base */
+    font-weight: 500;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.header-button:hover {
+    background-color: var(--background-color1); /* Cambia a azul al pasar el mouse */
+    color: var(--secondary-text-color); /* Texto blanco */
+}
+
+/* Ícono del menú para pantallas pequeñas */
+.header-menu-icon {
+    display: none; /* Oculto por defecto */
+}
+
+/* Drawer (menú móvil) */
+.header-drawer {
+    text-align: center;
+}
+
+.header-drawer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.header-drawer-item {
+    text-align: center;
+    padding: 10px 0;
+}
+
+/* Consultas de medios para diseño responsivo */
+@media (max-width: 768px) {
+    .header-nav {
+        display: none; /* Ocultar menú de navegación en pantallas pequeñas */
+    }
+
+    .header-menu-icon {
+        display: block; /* Mostrar ícono del menú en pantallas pequeñas */
+    }
+}
+
+@media (min-width: 769px) {
+    .header-menu-icon {
+        display: none; /* Ocultar ícono del menú en pantallas grandes */
+    }
+
+    .header-nav {
+        display: flex; /* Mostrar menú de navegación en pantallas grandes */
+    }
+}
