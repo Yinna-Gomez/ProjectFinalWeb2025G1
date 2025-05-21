@@ -16,8 +16,8 @@
 /* Logo del Header */
 .header-logo {
     background-color: var(--background-color2); /* Fondo amarillo */
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
