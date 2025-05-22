@@ -1,108 +1,144 @@
-/* Contenedor principal del Header */
-.header-container {
-    background-color: var(--background-color1); /* Fondo azul */
-    color: var(--secondary-text-color); /* Texto blanco */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+/* Estilos base para el header */
+.header-appbar {
+  background: var(--color-bg);
+  transition: all 0.3s ease;
+  min-height: 80px;
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
 }
 
-/* Toolbar del Header */
 .header-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+  padding: 0 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
 }
 
-/* Logo del Header */
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  background: transparent;
+  margin: 0 auto;
+  height: 100%;
+  /* Centrado vertical y horizontal */
+  justify-content: center;
+  padding-top: 12px;    /* Añadido para separar del borde superior */
+  padding-bottom: 12px; /* Añadido para centrar verticalmente */
+}
+
 .header-logo {
-    background-color: var(--background-color2); /* Fondo amarillo */
-    width: 60px;
-    height: 60px;
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 58px;
+  transition: transform 0.3s ease;
+}
+
+.header-logo-img:hover {
+  transform: scale(1.05);
+}
+
+.header-menu {
+  padding-top: 0; /* Elimina desplazamiento vertical */
+  display: flex;
+  gap: 8px;
+  align-items: center; /* Centra verticalmente los botones del menú */
+  height: 100%;
+}
+
+.header-menu-btn {
+  font-weight: 500;
+  font-size: 1.12rem !important;
+  color: var(--color-text) !important;
+  background: transparent !important;
+  padding: 10px 20px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+}
+
+.header-menu-btn:hover {
+  background: var(--color-hover) !important;
+  color: var(--color-accent) !important;
+  transform: translateY(-1px);
+}
+
+.header-login-btn {
+  background: var(--color-primary) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 12px 32px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  align-self: center; /* Centra verticalmente en el flex */
+  display: flex;
+  align-items: center;
+  height: 48px; /* Igual altura que los botones del menú */
+  box-sizing: border-box;
+}
+
+.header-login-btn:hover {
+  background: var(--color-secondary) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.1) !important;
+}
+
+.header-mobile-left,
+.header-mobile-right {
+  display: none;
+}
+
+.header-menu-icon,
+.header-login-icon {
+  color: var(--color-primary) !important;
+  font-size: 2rem !important;
+}
+
+
+@media (max-width: 900px) {
+  .header-toolbar {
+    padding: 0 8px;
+  }
+  .header-inner {
+    flex: 1;
     justify-content: center;
-    font-family: var(--font-family-primary); /* Fuente Montserrat */
-    font-size: var(--font-size-base); /* Tamaño base */
-    font-weight: bold;
-    color: var(--third-text-color); /* Texto negro */
-}
-
-/* Menú de navegación */
-.header-nav {
+    gap: 0;
+  }
+  .header-logo {
+    flex: 1;
     display: flex;
-    gap: 20px;
-}
-
-.header-link {
-    font-family: var(--font-family-secondary); /* Fuente Lato */
-    font-size: var(--font-size-base); /* Tamaño base */
-    color: var(--secondary-text-color); /* Texto blanco */
-    text-decoration: none; /* Elimina el subrayado */
-    padding: 10px 0;
-    transition: color 0.3s ease;
-}
-
-.header-link:hover {
-    color: var(--background-color2); /* Cambia a amarillo al pasar el mouse */
-}
-
-/* Botón de acción */
-.header-button {
-    background-color: var(--background-color2); /* Fondo amarillo */
-    color: var(--third-text-color); /* Texto negro */
-    font-family: var(--font-family-primary); /* Fuente Montserrat */
-    font-size: var(--font-size-base); /* Tamaño base */
-    font-weight: 500;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 0;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.header-button:hover {
-    background-color: var(--background-color1); /* Cambia a azul al pasar el mouse */
-    color: var(--secondary-text-color); /* Texto blanco */
-}
-
-/* Ícono del menú para pantallas pequeñas */
-.header-menu-icon {
-    display: none; /* Oculto por defecto */
-}
-
-/* Drawer (menú móvil) */
-.header-drawer {
-    text-align: center;
-}
-
-.header-drawer-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.header-drawer-item {
-    text-align: center;
-    padding: 10px 0;
-}
-
-/* Consultas de medios para diseño responsivo */
-@media (max-width: 768px) {
-    .header-nav {
-        display: none; /* Ocultar menú de navegación en pantallas pequeñas */
-    }
-
-    .header-menu-icon {
-        display: block; /* Mostrar ícono del menú en pantallas pequeñas */
-    }
-}
-
-@media (min-width: 769px) {
-    .header-menu-icon {
-        display: none; /* Ocultar ícono del menú en pantallas grandes */
-    }
-
-    .header-nav {
-        display: flex; /* Mostrar menú de navegación en pantallas grandes */
-    }
+    justify-content: center;
+  }
+  .header-logo-img {
+    height: 50px;
+  }
+  .header-menu {
+    display: none !important;
+  }
+  .header-login-btn {
+    display: none !important;
+    height: 48px; /* Igual altura que los botones del menú */
+  }
+  .header-mobile-left {
+    display: flex !important;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  .header-mobile-right {
+    display: flex !important;
+    align-items: center;
+    flex: 0 0 auto;
+  }
 }

@@ -1,16 +1,21 @@
-import React from 'react';
+import { BrowserRouter as Router } from 'react-router-dom';
+import Header from './Components/Header/Header';
+import Footer from './Components/Footer/Footer';
 import './App.css';
 
-import Header from './Components/Header/Header';
-
-const App = () => {
+function App() {
   return (
-
-      <Header />
- 
-      
- 
+    <Router>
+      <div className="App">
+        <Header />
+        {/* Aquí irá el contenido principal */}
+        <main>
+          {/* Las rutas se agregarán aquí */}
+        </main>
+        <Footer />
+      </div>
+    </Router>
   );
-};
+}
 
 export default App;
