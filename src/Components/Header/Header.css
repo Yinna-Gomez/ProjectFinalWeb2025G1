@@ -25,10 +25,10 @@
   background: transparent;
   margin: 0 auto;
   height: 100%;
-  /* Centrado vertical y horizontal */
+
   justify-content: center;
-  padding-top: 12px;    /* Añadido para separar del borde superior */
-  padding-bottom: 12px; /* Añadido para centrar verticalmente */
+  padding-top: 12px;    
+  padding-bottom: 12px; 
 }
 
 .header-logo {
@@ -85,7 +85,7 @@
   align-self: center; /* Centra verticalmente en el flex */
   display: flex;
   align-items: center;
-  height: 48px; /* Igual altura que los botones del menú */
+  height: 48px; 
   box-sizing: border-box;
 }
 
@@ -129,7 +129,7 @@
   }
   .header-login-btn {
     display: none !important;
-    height: 48px; /* Igual altura que los botones del menú */
+    height: 48px;
   }
   .header-mobile-left {
     display: flex !important;
