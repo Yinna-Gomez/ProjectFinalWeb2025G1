@@ -1,0 +1,124 @@
+/* Slider de banners */
+.homepage-slider-section {
+  width: 100%;
+  max-width: 1100px;
+  margin: 32px auto;
+  border-radius: 16px;
+  overflow: visible; /* Permite que las flechas sobresalgan */
+  box-shadow: 0 2px 16px rgba(44,62,80,0.07); /* similar a --color-primary con opacidad */
+  position: relative; /* Para posicionar las flechas respecto al slider */
+}
+
+.homepage-slider-container {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: var(--color-bg);
+}
+
+.homepage-slider-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.homepage-slider-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(44, 62, 80, 0.22); /* similar a --color-primary con opacidad */
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 32px;
+}
+
+.homepage-slider-title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.homepage-slider-desc {
+  margin: 12px 0 0 0;
+  font-size: 1.15rem;
+}
+
+.homepage-slider-btn {
+  position: absolute;
+  top: 50%;
+  background: var(--color-accent);
+  border: none;
+  color: #fff;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  cursor: pointer;
+  transform: translateY(-50%);
+  font-size: 1.3rem;
+  z-index: 2;
+  transition: background 0.2s;
+  /* Ajuste para que sobresalga fuera del slider */
+}
+.homepage-slider-btn:hover {
+  background: var(--color-secondary);
+}
+
+.homepage-slider-btn.left {
+  left: -44px; /* Mueve la flecha izquierda fuera del slider */
+}
+
+.homepage-slider-btn.right {
+  right: -44px; /* Mueve la flecha derecha fuera del slider */
+}
+
+.homepage-slider-indicators {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.homepage-slider-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-bg);
+  border: 2px solid var(--color-accent);
+  cursor: pointer;
+  display: inline-block;
+  transition: background 0.2s;
+}
+
+.homepage-slider-indicator.active {
+  background: var(--color-accent);
+}
+
+/* Secciones */
+.homepage-section {
+  max-width: 900px;
+  margin: 48px auto 0 auto;
+  padding: 32px 16px;
+  background: var(--color-surface);
+  border-radius: 10px;
+  box-shadow: 0 1px 8px var(--color-border);
+}
+
+.homepage-section:first-of-type {
+  margin-top: 64px;
+}
+
+.homepage-section:last-of-type {
+  margin-bottom: 64px;
+}
+
+.homepage-section-title {
+  color: var(--color-primary);
+  font-size: 1.7rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}

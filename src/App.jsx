@@ -1,6 +1,8 @@
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './Components/Header/Header';
 import Footer from './Components/Footer/Footer';
+import HomgePage from './Pages/HomePage/HomgePage';
+import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
 import './App.css';
 
 function App() {
@@ -8,9 +10,11 @@ function App() {
     <Router>
       <div className="App">
         <Header />
-        {/* Aquí irá el contenido principal */}
         <main>
-          {/* Las rutas se agregarán aquí */}
+          <Routes>
+            <Route path="/" element={<HomgePage />} />
+            <Route path="/seguimiento" element={<SeguimientoPage />} />
+          </Routes>
         </main>
         <Footer />
       </div>

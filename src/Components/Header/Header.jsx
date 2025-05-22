@@ -11,10 +11,10 @@ import Drawer from '@mui/material/Drawer';
 import './Header.css';
 
 const menuItems = [
-  { label: 'Inicio', href: '#' },
-  { label: 'Misión', href: '#' },
-  { label: 'Visión', href: '#' },
-  { label: 'Acerca de', href: '#' },
+  { label: 'Inicio', href: '#inicio' },
+  { label: 'Misión', href: '#mision' },
+  { label: 'Visión', href: '#vision' },
+  { label: 'Acerca de', href: '#acerca-de' },
 ];
 
 const Header = () => {
