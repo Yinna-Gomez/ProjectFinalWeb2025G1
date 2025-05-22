@@ -1,17 +1,17 @@
 import React from 'react'
 import './App.css'
-import Login from './Components/Login/Login.jsx'
-import CreateProject from './Components/CreateProject/CreateProject.jsx'
-import AddMember from './Components/AddMember/AddMember.jsx'
-import DetailProject from './Components/DetailProject/DetailProject.jsx'
+import Login from './Pages/Login/Login.jsx'
+import CreateProject from './Pages/CreateProject/CreateProject.jsx'
+import AddMember from './Pages/AddMember/AddMember.jsx'
+import DetailProject from './Pages/DetailProject/DetailProject.jsx'
 
 const App = () => {
   return (
     <main>
-      {/* <Login /> */}
+      <Login />
       {/* <CreateProject /> */}
       {/* <AddMember /> */}
-      <DetailProject />
+      {/* <DetailProject /> */}
     </main>
   )
 }
