@@ -20,10 +20,10 @@ function App() {
           <Routes>
             <Route path="/" element={<HomgePage />} />
             <Route path="/seguimiento" element={<SeguimientoPage />} />
-            <Login />
-            {/* <CreateProject /> */}
-            {/* <AddMember /> */}
-            {/* <DetailProject /> */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/createproject" element={<CreateProject />} />
+            <Route path="/addmember" element={<AddMember />} />
+            <Route path="/detailproject" element={<DetailProject />} />
           </Routes>
         </main>
         <Footer />

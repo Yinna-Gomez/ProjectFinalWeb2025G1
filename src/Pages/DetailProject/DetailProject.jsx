@@ -50,19 +50,21 @@ const DetailProject = () => {
 
   return (
     <Container sx={{ minHeight: '100vh', py: 6 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" align="center" gutterBottom>
+      <Paper elevation={3} sx={{ p: 4, backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}>
+        <Typography variant="h4" align="center" gutterBottom sx={{ color: 'var(--color-primary)' }}>
           Detalle del proyecto
         </Typography>
 
         <Grid container spacing={4}>
-          {/* Detalles del Proyecto */}
+          {/* Información del Proyecto */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom>Información</Typography>
-            <Divider sx={{ mb: 2 }} />
+            <Typography variant="h6" gutterBottom sx={{ color: 'var(--color-primary)' }}>
+              Información
+            </Typography>
+            <Divider sx={{ mb: 2, borderColor: 'var(--color-border)' }} />
             <Stack spacing={2}>
               {Object.entries(projectDetails).map(([key, value]) => (
-                <Typography key={key} variant="body1" fontWeight={500}>
+                <Typography key={key} variant="body2" sx={{ fontWeight: 500 }}>
                   {value}
                 </Typography>
               ))}
@@ -71,12 +73,14 @@ const DetailProject = () => {
 
           {/* Archivos */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom>Archivos</Typography>
-            <Divider sx={{ mb: 2 }} />
+            <Typography variant="h6" gutterBottom sx={{ color: 'var(--color-primary)' }}>
+              Archivos
+            </Typography>
+            <Divider sx={{ mb: 2, borderColor: 'var(--color-border)' }} />
             <Paper variant="outlined" sx={{ maxHeight: 240, overflowY: 'auto', p: 2 }}>
               <List dense>
                 {files.map((file, index) => (
-                  <ListItem key={index} button>
+                  <ListItem key={index} button sx={{ borderRadius: 1, '&:hover': { backgroundColor: 'var(--color-hover)' } }}>
                     <ListItemIcon>
                       <PictureAsPdfIcon color="error" />
                     </ListItemIcon>
@@ -92,14 +96,16 @@ const DetailProject = () => {
 
           {/* Imágenes */}
           <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom>Imágenes</Typography>
-            <Divider sx={{ mb: 2 }} />
+            <Typography variant="h6" gutterBottom sx={{ color: 'var(--color-primary)' }}>
+              Imágenes
+            </Typography>
+            <Divider sx={{ mb: 2, borderColor: 'var(--color-border)' }} />
             <Paper variant="outlined" sx={{ maxHeight: 240, overflowY: 'auto', p: 2 }}>
               <List dense>
                 {images.map((image, index) => (
-                  <ListItem key={index} button>
+                  <ListItem key={index} button sx={{ borderRadius: 1, '&:hover': { backgroundColor: 'var(--color-hover)' } }}>
                     <ListItemIcon>
-                      <ImageIcon color="primary" />
+                      <ImageIcon sx={{ color: 'var(--color-accent)' }} />
                     </ListItemIcon>
                     <ListItemText primary={image} />
                   </ListItem>
@@ -111,7 +117,17 @@ const DetailProject = () => {
 
         {/* Botón Volver */}
         <Box textAlign="center" mt={6}>
-          <Button variant="contained" sx={{ bgcolor: 'warning.main' }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: 'var(--color-accent)',
+              color: '#fff',
+              '&:hover': { backgroundColor: '#2c80c9' },
+              borderRadius: 2,
+              px: 4,
+              py: 1
+            }}
+          >
             Volver
           </Button>
         </Box>

@@ -33,8 +33,21 @@ const CreateProject = () => {
 
   return (
     <Container sx={{ minHeight: '100vh', py: 6 }}>
-      <Paper elevation={3} sx={{ p: 4 }}>
-        <Typography variant="h4" align="center" gutterBottom>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          backgroundColor: 'var(--color-surface)',
+          color: 'var(--color-text)',
+          borderRadius: 3
+        }}
+      >
+        <Typography
+          variant="h4"
+          align="center"
+          gutterBottom
+          sx={{ color: 'var(--color-primary)', fontWeight: 600 }}
+        >
           Crear Proyecto
         </Typography>
 
@@ -93,8 +106,15 @@ const CreateProject = () => {
             <Button
               fullWidth
               variant="contained"
-              sx={{ height: '100%' }}
-              color="warning"
+              sx={{
+                height: '100%',
+                backgroundColor: 'var(--color-accent)',
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#2c80c9'
+                },
+                borderRadius: 2
+              }}
             >
               Agregar Integrantes
             </Button>
@@ -124,9 +144,17 @@ const CreateProject = () => {
         <Box mt={4} textAlign="right">
           <Button
             variant="contained"
-            color="warning"
             onClick={handleSubmit}
-            sx={{ border: '1px solid black', color: 'black' }}
+            sx={{
+              backgroundColor: 'var(--color-primary)',
+              color: '#fff',
+              '&:hover': {
+                backgroundColor: '#0056b3'
+              },
+              px: 3,
+              py: 1,
+              borderRadius: 2
+            }}
           >
             Crear Proyecto
           </Button>

@@ -34,12 +34,38 @@ const AddMember = () => {
   };
 
   return (
-    <Container sx={{ minHeight: '100vh', py: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 500 }}>
-        <Typography variant="h5" align="center" gutterBottom>
+    <Container sx={{
+      minHeight: '100vh',
+      py: 6,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    }}>
+      <Paper
+        elevation={3}
+        sx={{
+          p: 4,
+          width: '100%',
+          maxWidth: 500,
+          backgroundColor: 'var(--color-surface)',
+          color: 'var(--color-text)',
+          borderRadius: 3
+        }}
+      >
+        <Typography
+          variant="h5"
+          align="center"
+          gutterBottom
+          sx={{ color: 'var(--color-primary)', fontWeight: 600 }}
+        >
           Agregar integrante
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
           <TextField
             fullWidth
             label="Nombre"
@@ -88,19 +114,36 @@ const AddMember = () => {
             </Select>
           </FormControl>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 3 }}>
             <Button
               variant="contained"
-              color="warning"
-              sx={{ border: '1px solid black', color: 'white' }}
+              sx={{
+                backgroundColor: 'var(--color-accent)',
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#2c80c9'
+                },
+                px: 3,
+                py: 1,
+                borderRadius: 2
+              }}
             >
               Volver
             </Button>
+
             <Button
               type="submit"
               variant="contained"
-              color="warning"
-              sx={{ border: '1px solid black', color: 'white' }}
+              sx={{
+                backgroundColor: 'var(--color-primary)',
+                color: '#fff',
+                '&:hover': {
+                  backgroundColor: '#0056b3'
+                },
+                px: 3,
+                py: 1,
+                borderRadius: 2
+              }}
             >
               Agregar integrante
             </Button>
