@@ -1,37 +1,138 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Grid,
+  Paper,
+  TextField,
+  Typography
+} from '@mui/material';
 
 const CreateProject = () => {
+  const [project, setProject] = useState({
+    title: '',
+    budget: '',
+    area: '',
+    educationalInstitution: '',
+    objectives: '',
+    cronogram: '',
+    notes: ''
+  });
+
+  const handleChange = (e) => {
+    setProject({
+      ...project,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async () => {
+    await saveProject(project);
+  };
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <Container sx={{ minHeight: '100vh', py: 6 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Crear Proyecto
+        </Typography>
 
-      {/* FORMULARIO */}
-      <main className="flex-grow flex items-center justify-center p-6">
-        <div className="bg-gray-200 w-full max-w-4xl rounded-md p-8">
-          <h2 className="text-center text-2xl font-semibold mb-6">Crear Proyecto</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <input type="text" placeholder="Titulo" className="p-2 rounded-md bg-white text-gray-500" />
-            <input type="text" placeholder="Presupuesto" className="p-2 rounded-md bg-white text-gray-500" />
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Título"
+              name="title"
+              value={project.title}
+              onChange={handleChange}
+            />
+          </Grid>
 
-            <input type="text" placeholder="Área" className="p-2 rounded-md bg-white text-gray-500" />
-            <input type="text" placeholder="Institución Educativa" className="p-2 rounded-md bg-white text-gray-500" />
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Presupuesto"
+              name="budget"
+              value={project.budget}
+              onChange={handleChange}
+            />
+          </Grid>
 
-            <input type="text" placeholder="Objetivos" className="p-2 rounded-md bg-white text-gray-500" />
-            <button className="p-2 rounded-md bg-yellow-400 text-white font-semibold hover:bg-yellow-500 transition">
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Área"
+              name="area"
+              value={project.area}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Institución Educativa"
+              name="educationalInstitution"
+              value={project.educationalInstitution}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Objetivos"
+              name="objectives"
+              value={project.objectives}
+              onChange={handleChange}
+            />
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ height: '100%' }}
+              color="warning"
+            >
               Agregar Integrantes
-            </button>
+            </Button>
+          </Grid>
 
-            <input type="text" placeholder="Cronograma" className="p-2 rounded-md bg-white text-gray-500" />
-            <input type="text" placeholder="Observaciones" className="p-2 rounded-md bg-white text-gray-500" />
-          </div>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Cronograma"
+              name="cronogram"
+              value={project.cronogram}
+              onChange={handleChange}
+            />
+          </Grid>
 
-          <div className="mt-6 text-right">
-            <button className="bg-yellow-400 hover:bg-yellow-500 transition text-black font-semibold px-4 py-2 rounded border border-black">
-              Crear Proyecto
-            </button>
-          </div>
-        </div>
-      </main>
-    </div>
+          <Grid item xs={12} md={6}>
+            <TextField
+              fullWidth
+              label="Observaciones"
+              name="notes"
+              value={project.notes}
+              onChange={handleChange}
+            />
+          </Grid>
+        </Grid>
+
+        <Box mt={4} textAlign="right">
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleSubmit}
+            sx={{ border: '1px solid black', color: 'black' }}
+          >
+            Crear Proyecto
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

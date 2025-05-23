@@ -1,51 +1,70 @@
 import React from 'react';
+import {Box,Button,Container,TextField,Typography,Link,Stack,Paper
+} from '@mui/material';
 
 const Login = () => {
-    return (
-        <div className="flex flex-col min-h-screen">
+  return (
+    <Container component="main" maxWidth="sm" sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+      <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
+        <Typography variant="h5" component="h2" gutterBottom textAlign="center">
+          Iniciar sesión
+        </Typography>
 
-            {/* LOGIN BOX */}
-            <div className="flex justify-center items-center flex-grow bg-white">
-                <div className="bg-gray-200 p-10 rounded shadow-md w-full max-w-md text-center">
-                    <h2 className="text-2xl font-semibold mb-4">Iniciar sesión</h2>
-                    <p className="text-sm mb-4">
-                        ¿No tienes una cuenta? <a href="#" className="text-blue-600 hover:underline">Regístrate</a>
-                    </p>
+        <Typography variant="body2" textAlign="center" mb={2}>
+          ¿No tienes una cuenta? <Link href="#">Regístrate</Link>
+        </Typography>
 
-                    <input
-                        type="email"
-                        placeholder="Correo"
-                        className="w-full px-4 py-2 mb-4 rounded border border-gray-300 focus:outline-none"
-                    />
-                    <input
-                        type="password"
-                        placeholder="Contraseña"
-                        className="w-full px-4 py-2 mb-2 rounded border border-gray-300 focus:outline-none"
-                    />
-                    <div className="text-sm mb-4 text-blue-600 hover:underline">
-                        <a href="#">¿Has olvidado la contraseña?</a>
-                    </div>
+        <Stack spacing={2}>
+          <TextField type="email" label="Correo" fullWidth variant="outlined" />
+          <TextField type="password" label="Contraseña" fullWidth variant="outlined" />
 
-                    <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-bold py-2 px-4 rounded w-full border border-gray-500">
-                        Iniciar Sesión
-                    </button>
+          <Box textAlign="right">
+            <Link href="#" variant="body2">
+              ¿Has olvidado la contraseña?
+            </Link>
+          </Box>
 
-                    <p className="mt-6 mb-4 text-sm">O conéctate con</p>
+          <Button variant="contained" fullWidth sx={{ bgcolor: 'warning.main' }}>
+            Iniciar Sesión
+          </Button>
+        </Stack>
 
-                    <div className="space-y-2">
-                        <button className="flex items-center justify-center bg-[#126083] text-white py-2 px-4 rounded w-full">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook" className="w-5 h-5 mr-2" />
-                            Facebook
-                        </button>
-                        <button className="flex items-center justify-center bg-white text-black py-2 px-4 border rounded w-full">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google" className="w-5 h-5 mr-2" />
-                            Google
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
+        <Typography variant="body2" align="center" mt={4} mb={2}>
+          O conéctate con
+        </Typography>
+
+        <Stack spacing={1}>
+          <Button
+            fullWidth
+            variant="contained"
+            sx={{ bgcolor: '#126083' }}
+            startIcon={
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
+                alt="Facebook"
+                style={{ width: 20, height: 20 }}
+              />
+            }
+          >
+            Facebook
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            startIcon={
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png"
+                alt="Google"
+                style={{ width: 20, height: 20 }}
+              />
+            }
+          >
+            Google
+          </Button>
+        </Stack>
+      </Paper>
+    </Container>
+  );
 };
 
 export default Login;

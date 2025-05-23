@@ -1,15 +1,31 @@
 import React from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  Typography,
+  Grid,
+  Paper,
+  Divider,
+  Stack,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText
+} from '@mui/material';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ImageIcon from '@mui/icons-material/Image';
 
 const DetailProject = () => {
   const projectDetails = {
-    title: "Título del proyecto 1",
-    status: "Formulación",
-    area: "Área del proyecto",
-    objectives: "Objetivos del proyecto",
-    cronogram: "Cronograma del proyecto",
-    budget: "Presupuesto del proyecto",
-    educationalInstitution: "Institución Educativa del proyecto",
-    members: "Integrantes del proyecto"
+    title: 'Título del proyecto 1',
+    status: 'Formulación',
+    area: 'Área del proyecto',
+    objectives: 'Objetivos del proyecto',
+    cronogram: 'Cronograma del proyecto',
+    budget: 'Presupuesto del proyecto',
+    educationalInstitution: 'Institución Educativa del proyecto',
+    members: 'Integrantes del proyecto'
   };
 
   const files = [
@@ -33,75 +49,74 @@ const DetailProject = () => {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <Container sx={{ minHeight: '100vh', py: 6 }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
+        <Typography variant="h4" align="center" gutterBottom>
+          Detalle del proyecto
+        </Typography>
 
-      {/* PROJECT DETAIL CONTENT */}
-      <main className="flex-grow flex justify-center p-6 bg-gray-100">
-        <div className="bg-white w-full max-w-4xl rounded-md shadow-md p-8 border border-gray-300">
-          <h2 className="text-center text-3xl font-semibold mb-8 text-gray-800">Detalle del proyecto</h2>
+        <Grid container spacing={4}>
+          {/* Detalles del Proyecto */}
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>Información</Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Stack spacing={2}>
+              {Object.entries(projectDetails).map(([key, value]) => (
+                <Typography key={key} variant="body1" fontWeight={500}>
+                  {value}
+                </Typography>
+              ))}
+            </Stack>
+          </Grid>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Project Details */}
-            <div className="md:col-span-1 border-r border-gray-200 pr-4">
-              <div className="space-y-4">
-                {Object.entries(projectDetails).map(([key, value]) => (
-                  <div key={key}>
-                    <p className="text-lg font-medium text-gray-700">{value}</p>
-                  </div>
+          {/* Archivos */}
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>Archivos</Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Paper variant="outlined" sx={{ maxHeight: 240, overflowY: 'auto', p: 2 }}>
+              <List dense>
+                {files.map((file, index) => (
+                  <ListItem key={index} button>
+                    <ListItemIcon>
+                      <PictureAsPdfIcon color="error" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={file.name}
+                      secondary={`PDF, Escala ${file.size}`}
+                    />
+                  </ListItem>
                 ))}
-              </div>
-            </div>
+              </List>
+            </Paper>
+          </Grid>
 
-            {/* Files Section */}
-            <div className="md:col-span-1">
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Archivos</h3>
-              <div className="bg-white border border-gray-300 p-4 rounded-md h-60 overflow-y-auto custom-scrollbar">
-                <div className="space-y-2">
-                  {files.map((file, index) => (
-                    <div key={index} className="flex items-center space-x-2 text-gray-700 hover:bg-gray-50 p-1 rounded cursor-pointer">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0113.414 2L16 4.586A2 2 0 0118 6v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 5a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 4a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" clipRule="evenodd" />
-                      </svg>
-                      <div>
-                        <p className="text-sm font-medium">{file.name}</p>
-                        <p className="text-xs text-gray-500">PDF, Scale {file.size}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          {/* Imágenes */}
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>Imágenes</Typography>
+            <Divider sx={{ mb: 2 }} />
+            <Paper variant="outlined" sx={{ maxHeight: 240, overflowY: 'auto', p: 2 }}>
+              <List dense>
+                {images.map((image, index) => (
+                  <ListItem key={index} button>
+                    <ListItemIcon>
+                      <ImageIcon color="primary" />
+                    </ListItemIcon>
+                    <ListItemText primary={image} />
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
+        </Grid>
 
-            {/* Images Section */}
-            <div className="md:col-span-1">
-              <h3 className="text-xl font-semibold mb-4 text-gray-800">Imágenes</h3>
-              <div className="bg-white border border-gray-300 p-4 rounded-md h-60 overflow-y-auto custom-scrollbar">
-                <div className="space-y-2">
-                  {images.map((image, index) => (
-                    <div key={index} className="flex items-center space-x-2 text-gray-700 hover:bg-gray-50 p-1 rounded cursor-pointer">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-4 4 4 4-4v4zM8 9a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                      </svg>
-                      <p className="text-sm font-medium">{image}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Back Button */}
-          <div className="mt-8 text-center">
-            <button
-              type="button"
-              className="bg-yellow-400 text-white font-semibold px-6 py-2 rounded border border-black hover:bg-yellow-500 transition duration-200"
-            >
-              Volver
-            </button>
-          </div>
-        </div>
-      </main>
-    </div>
+        {/* Botón Volver */}
+        <Box textAlign="center" mt={6}>
+          <Button variant="contained" sx={{ bgcolor: 'warning.main' }}>
+            Volver
+          </Button>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

@@ -1,74 +1,113 @@
-import React from 'react';
+import React, { useState } from 'react';
+import {
+  Box,
+  Button,
+  Container,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography
+} from '@mui/material';
 
 const AddMember = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    idType: '',
+    idNumber: '',
+    grade: '',
+  });
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Integrante agregado:", formData);
+  };
+
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-
-      {/* FORMULARIO */}
-      <main className="flex-grow flex items-center justify-center p-6">
-        <div className="bg-gray-200 w-full max-w-md rounded-md p-8 border">
-          <h2 className="text-center text-2xl font-semibold mb-6">Agregar integrante</h2>
-          <form className="space-y-4">
-            <input
-              type="text"
-              placeholder="Nombre"
-              className="w-full p-2 rounded-md bg-white text-gray-600"
-            />
-            <input
-              type="text"
-              placeholder="Apellidos"
-              className="w-full p-2 rounded-md bg-white text-gray-600"
-            />
-            <select
-              className="w-full p-2 rounded-md bg-white text-gray-600"
-              defaultValue=""
+    <Container sx={{ minHeight: '100vh', py: 6, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 500 }}>
+        <Typography variant="h5" align="center" gutterBottom>
+          Agregar integrante
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <TextField
+            fullWidth
+            label="Nombre"
+            name="firstName"
+            value={formData.firstName}
+            onChange={handleChange}
+          />
+          <TextField
+            fullWidth
+            label="Apellidos"
+            name="lastName"
+            value={formData.lastName}
+            onChange={handleChange}
+          />
+          <FormControl fullWidth>
+            <InputLabel>Identificación</InputLabel>
+            <Select
+              name="idType"
+              value={formData.idType}
+              onChange={handleChange}
+              label="Identificación"
             >
-              <option value="" disabled>Identificación</option>
-              <option value="cc">Cédula de Ciudadanía</option>
-              <option value="ti">Tarjeta de Identidad</option>
-              <option value="ce">Cédula de Extranjería</option>
-            </select>
-            <input
-              type="text"
-              placeholder="Número Identificación"
-              className="w-full p-2 rounded-md bg-white text-gray-600"
-            />
-            <select
-              className="w-full p-2 rounded-md bg-white text-gray-600"
-              defaultValue=""
+              <MenuItem value="cc">Cédula de Ciudadanía</MenuItem>
+              <MenuItem value="ti">Tarjeta de Identidad</MenuItem>
+              <MenuItem value="ce">Cédula de Extranjería</MenuItem>
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            label="Número Identificación"
+            name="idNumber"
+            value={formData.idNumber}
+            onChange={handleChange}
+          />
+          <FormControl fullWidth>
+            <InputLabel>Grado escolar</InputLabel>
+            <Select
+              name="grade"
+              value={formData.grade}
+              onChange={handleChange}
+              label="Grado escolar"
             >
-              <option value="" disabled>Grado escolar</option>
-              <option value="1">1°</option>
-              <option value="2">2°</option>
-              <option value="3">3°</option>
-              <option value="4">4°</option>
-              <option value="5">5°</option>
-              <option value="6">6°</option>
-              <option value="7">7°</option>
-              <option value="8">8°</option>
-              <option value="9">9°</option>
-              <option value="10">10°</option>
-              <option value="11">11°</option>
-            </select>
+              {[...Array(11)].map((_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>{`${i + 1}°`}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
 
-            <div className="flex justify-between pt-4">
-              <button
-                type="button"
-                className="bg-yellow-400 text-white font-semibold px-4 py-2 rounded border border-black hover:bg-yellow-500"
-              >
-                Volver
-              </button>
-              <button
-                type="submit"
-                className="bg-yellow-400 text-white font-semibold px-4 py-2 rounded border border-black hover:bg-yellow-500"
-              >
-                Agregar integrante
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
-    </div>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
+            <Button
+              variant="contained"
+              color="warning"
+              sx={{ border: '1px solid black', color: 'white' }}
+            >
+              Volver
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              color="warning"
+              sx={{ border: '1px solid black', color: 'white' }}
+            >
+              Agregar integrante
+            </Button>
+          </Box>
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 
