@@ -1,19 +1,35 @@
+
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Header from './Components/Header/Header';
+import Footer from './Components/Footer/Footer';
+import HomgePage from './Pages/HomePage/HomgePage';
+import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
 import React from 'react'
-import './App.css'
 import Login from './Pages/Login/Login.jsx'
 import CreateProject from './Pages/CreateProject/CreateProject.jsx'
 import AddMember from './Pages/AddMember/AddMember.jsx'
 import DetailProject from './Pages/DetailProject/DetailProject.jsx'
+import './App.css';
 
-const App = () => {
+function App() {
   return (
-    <main>
-      <Login />
-      {/* <CreateProject /> */}
-      {/* <AddMember /> */}
-      {/* <DetailProject /> */}
-    </main>
-  )
+    <Router>
+      <div className="App">
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<HomgePage />} />
+            <Route path="/seguimiento" element={<SeguimientoPage />} />
+            <Login />
+            {/* <CreateProject /> */}
+            {/* <AddMember /> */}
+            {/* <DetailProject /> */}
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

@@ -1,0 +1,144 @@
+/* Estilos base para el header */
+.header-appbar {
+  background: var(--color-bg);
+  transition: all 0.3s ease;
+  min-height: 80px;
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+}
+
+.header-toolbar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80px;
+  padding: 0 24px;
+  max-width: 1280px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 52px;
+  background: transparent;
+  margin: 0 auto;
+  height: 100%;
+
+  justify-content: center;
+  padding-top: 12px;    
+  padding-bottom: 12px; 
+}
+
+.header-logo {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 58px;
+  transition: transform 0.3s ease;
+}
+
+.header-logo-img:hover {
+  transform: scale(1.05);
+}
+
+.header-menu {
+  padding-top: 0; /* Elimina desplazamiento vertical */
+  display: flex;
+  gap: 8px;
+  align-items: center; /* Centra verticalmente los botones del menú */
+  height: 100%;
+}
+
+.header-menu-btn {
+  font-weight: 500;
+  font-size: 1.12rem !important;
+  color: var(--color-text) !important;
+  background: transparent !important;
+  padding: 10px 20px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+}
+
+.header-menu-btn:hover {
+  background: var(--color-hover) !important;
+  color: var(--color-accent) !important;
+  transform: translateY(-1px);
+}
+
+.header-login-btn {
+  background: var(--color-primary) !important;
+  color: white !important;
+  font-weight: 500 !important;
+  padding: 12px 32px !important;
+  border-radius: 6px !important;
+  transition: all 0.3s ease !important;
+  text-transform: none !important;
+  letter-spacing: 0.5px !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  align-self: center; /* Centra verticalmente en el flex */
+  display: flex;
+  align-items: center;
+  height: 48px; 
+  box-sizing: border-box;
+}
+
+.header-login-btn:hover {
+  background: var(--color-secondary) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(44, 62, 80, 0.1) !important;
+}
+
+.header-mobile-left,
+.header-mobile-right {
+  display: none;
+}
+
+.header-menu-icon,
+.header-login-icon {
+  color: var(--color-primary) !important;
+  font-size: 2rem !important;
+}
+
+
+@media (max-width: 900px) {
+  .header-toolbar {
+    padding: 0 8px;
+  }
+  .header-inner {
+    flex: 1;
+    justify-content: center;
+    gap: 0;
+  }
+  .header-logo {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+  }
+  .header-logo-img {
+    height: 50px;
+  }
+  .header-menu {
+    display: none !important;
+  }
+  .header-login-btn {
+    display: none !important;
+    height: 48px;
+  }
+  .header-mobile-left {
+    display: flex !important;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  .header-mobile-right {
+    display: flex !important;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+}

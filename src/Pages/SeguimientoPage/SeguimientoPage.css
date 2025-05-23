@@ -1,0 +1,113 @@
+.seguimiento-container {
+  /* min-height: 100vh; */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: var(--color-bg);
+  margin-top: 40px;
+  padding: 32px 8px;
+}
+
+.seguimiento-form {
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px var(--color-border);
+  padding: 32px 28px 24px 28px;
+  max-width: 420px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.seguimiento-title {
+  color: var(--color-primary);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+.seguimiento-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.seguimiento-field label {
+  color: var(--color-secondary);
+  font-weight: 500;
+  font-size: 1rem;
+  margin-bottom: 2px;
+}
+
+.seguimiento-field input[type="date"],
+.seguimiento-field textarea,
+.seguimiento-field input[type="file"] {
+  font-family: inherit;
+  font-size: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border 0.2s;
+}
+
+.seguimiento-field input[type="date"]:disabled {
+  background: var(--color-border);
+  color: var(--color-muted);
+}
+
+.seguimiento-field textarea:focus,
+.seguimiento-field input[type="date"]:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.seguimiento-field input[type="file"] {
+  padding: 6px 0;
+  background: none;
+  border: none;
+}
+
+.seguimiento-btn {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.08rem;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 0;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.seguimiento-btn:hover {
+  background: var(--color-accent);
+}
+
+.seguimiento-error {
+  color: #c0392b;
+  background: #fbeeea;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.98rem;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.req {
+  color: #c0392b;
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .seguimiento-form {
+    padding: 18px 6vw 16px 6vw;
+    max-width: 98vw;
+  }
+}
