@@ -1,0 +1,310 @@
+/* Panel principal */
+.visualiza-panel-container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 60vh;
+  background: var(--color-bg);
+  margin-top: 60px;
+  padding: 40px 0;
+  gap: 40px; /* Aumenta separación entre paneles */
+}
+
+.visualiza-panel {
+  background: var(--color-surface);
+  border-radius: 14px;
+  box-shadow: 0 2px 16px var(--color-border);
+  padding: 40px 36px 32px 36px; /* Más espacio interno */
+  max-width: 600px; /* Más ancho */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.visualiza-panel-wide {
+  max-width: 1200px; /* Mucho más ancho para el contenedor principal */
+  margin: 0 auto;
+  width: 100%;
+}
+
+.visualiza-panel-lateral {
+  min-width: 270px;
+  max-width: 340px;
+  margin-left: 32px;
+}
+
+.visualiza-buscador {
+  margin-bottom: 12px;
+}
+
+.visualiza-input-busqueda {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: var(--color-bg);
+  color: var(--color-text);
+  transition: border 0.2s;
+}
+
+.visualiza-input-busqueda:focus {
+  border-color: var(--color-accent);
+  outline: none;
+}
+
+.visualiza-tabs {
+  margin-bottom: 18px;
+}
+
+.visualiza-tab-content {
+  min-height: 180px;
+}
+
+.visualiza-lista-proyectos {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.visualiza-proyecto-item {
+  padding: 12px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1.08rem;
+  color: var(--color-primary);
+  transition: background 0.18s;
+  margin-bottom: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface, #fff);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+  padding: 1.2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.visualiza-proyecto-card {
+  background: var(--color-surface, #fff);
+  border-radius: 14px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+  padding: 1.5rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  min-width: 320px;
+  max-width: 700px;
+}
+
+.visualiza-proyecto-header {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+  font-size: 1.18rem;
+  font-weight: 600;
+}
+
+.visualiza-proyecto-item:hover {
+  background: var(--color-hover);
+  border-color: var(--color-accent);
+}
+
+.visualiza-acciones {
+  display: flex;
+  gap: 24px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+
+.visualiza-btn {
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: background 0.2s;
+  letter-spacing: 0.5px;
+}
+
+.visualiza-btn:hover {
+  background: var(--color-accent);
+}
+
+/* Estilos para el panel de administración */
+.visualiza-admin-panel {
+  margin-top: 2rem;
+  padding: 1.5rem 1rem;
+  background: var(--color-surface, #f7f9fb);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.visualiza-admin-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--color-primary, #1a237e);
+}
+
+.visualiza-admin-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.visualiza-btn-admin {
+  background: var(--color-primary, #1a237e);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.visualiza-btn-admin:hover {
+  background: var(--color-accent, #3949ab);
+}
+
+.visualiza-btn-cerrar {
+  background: var(--color-accent, #00bfae);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.visualiza-btn-cerrar:hover {
+  background: #00897b;
+}
+
+.visualiza-estado-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.visualiza-estado-form-row-inline {
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.visualiza-select-estado {
+  padding: 0.4rem 0.7rem;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  font-size: 1rem;
+}
+
+.visualiza-textarea-observacion {
+  min-height: 40px;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  padding: 0.5rem;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.visualiza-btn-guardar-estado {
+  margin-top: 0.5rem;
+  background: var(--color-accent, #00bfae);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1.2rem;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+
+.visualiza-btn-guardar-estado:hover {
+  background: #00897b;
+}
+
+.visualiza-estado-label {
+  margin-left: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 2px 10px;
+  border-radius: 8px;
+  background: var(--color-surface, #e3f2fd);
+  color: var(--color-primary, #1a237e);
+}
+
+.visualiza-estado-activo {
+  color: var(--color-accent, #00bfae);
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .visualiza-panel-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 24px;
+    padding: 24px 0;
+  }
+  .visualiza-panel-wide {
+    max-width: 98vw;
+    padding: 0 2vw;
+  }
+  .visualiza-panel-lateral {
+    margin-left: 0;
+    max-width: 100vw;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 700px) {
+  .visualiza-panel {
+    padding: 12px 2vw 10px 2vw;
+    max-width: 100vw;
+  }
+  .visualiza-panel-wide {
+    max-width: 100vw;
+    padding: 0 0.5rem;
+  }
+  .visualiza-proyecto-card {
+    min-width: unset;
+    max-width: 100vw;
+    padding: 1rem 0.5rem;
+  }
+  .visualiza-panel-lateral {
+    margin-left: 0;
+    max-width: 100vw;
+    min-width: unset;
+  }
+}
+
+@media (max-width: 500px) {
+  .visualiza-panel {
+    padding: 6px 0.5vw 6px 0.5vw;
+  }
+  .visualiza-proyecto-header {
+    gap: 0.7rem;
+    font-size: 1rem;
+  }
+  .visualiza-acciones {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+}
