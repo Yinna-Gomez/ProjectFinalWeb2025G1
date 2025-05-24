@@ -70,10 +70,10 @@ app.put('/api/proyectos/:id/estado', async (req, res) => {
   try {
     const proyecto = await Proyecto.findById(id);
     if (!proyecto) return res.status(404).json({ message: 'Proyecto no encontrado' });
-    const ESTADOS = ['Activo', 'Formulación', 'Evaluación', 'Finalizado'];
+    const ESTADOS = ['formulacion', 'evaluacion', 'activo', 'inactivo', 'finalizado'];
     // Normaliza ambos estados
-    const estadoActual = normalizaEstado(proyecto.estado);
-    const estadoNuevo = normalizaEstado(estado);
+    const estadoActual = (proyecto.estado || '').toLowerCase();
+    const estadoNuevo = (estado || '').toLowerCase();
     const idxActual = ESTADOS.indexOf(estadoActual);
     const idxNuevo = ESTADOS.indexOf(estadoNuevo);
     if (idxNuevo === -1 || idxNuevo > idxActual + 1 || idxNuevo < idxActual) {
@@ -85,6 +85,79 @@ app.put('/api/proyectos/:id/estado', async (req, res) => {
     res.json({ message: 'Estado actualizado', proyecto });
   } catch (err) {
     res.status(500).json({ message: 'Error al actualizar estado' });
+  }
+});
+
+// Crear usuario
+app.post('/api/usuarios', async (req, res) => {
+  try {
+    let { usuario, contrasenia, nombre, apellido, correo, rol, tipoIdentificacion, identificacion, gradoEscolar } = req.body;
+    usuario = usuario.trim().toLowerCase();
+    correo = correo.trim().toLowerCase();
+    rol = rol.trim().toLowerCase();
+    // Verifica que usuario y correo sean únicos
+    const existeUsuario = await User.findOne({ usuario });
+    const existeCorreo = await User.findOne({ correo });
+    if (existeUsuario) return res.status(400).json({ message: 'El usuario ya existe' });
+    if (existeCorreo) return res.status(400).json({ message: 'El correo ya existe' });
+    const nuevo = new User({ usuario, contrasenia, nombre, apellido, correo, rol, tipoIdentificacion, identificacion, gradoEscolar });
+    await nuevo.save();
+    res.status(201).json({ message: 'Usuario creado', usuario: nuevo });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al crear usuario' });
+  }
+});
+
+// Actualizar usuario por id
+app.put('/api/usuarios/:id', async (req, res) => {
+  try {
+    let { usuario, contrasenia, nombre, apellido, correo, rol, tipoIdentificacion, identificacion, gradoEscolar } = req.body;
+    if (usuario) usuario = usuario.trim().toLowerCase();
+    if (correo) correo = correo.trim().toLowerCase();
+    if (rol) rol = rol.trim().toLowerCase();
+    const actualizado = await User.findByIdAndUpdate(
+      req.params.id,
+      { usuario, contrasenia, nombre, apellido, correo, rol, tipoIdentificacion, identificacion, gradoEscolar },
+      { new: true }
+    );
+    if (!actualizado) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json({ message: 'Usuario actualizado', usuario: actualizado });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al actualizar usuario' });
+  }
+});
+
+// Obtener usuario por nombre de usuario
+app.get('/api/usuarios/:usuario', async (req, res) => {
+  try {
+    const usuario = req.params.usuario.trim().toLowerCase();
+    const user = await User.findOne({ usuario });
+    if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: 'Error al buscar usuario' });
+  }
+});
+
+// Eliminar usuario por id
+app.delete('/api/usuarios/:id', async (req, res) => {
+  try {
+    const eliminado = await User.findByIdAndDelete(req.params.id);
+    if (!eliminado) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.json({ message: 'Usuario eliminado' });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al eliminar usuario' });
+  }
+});
+
+// Crear un nuevo proyecto
+app.post('/api/proyectos', async (req, res) => {
+  try {
+    const nuevoProyecto = new Proyecto(req.body);
+    await nuevoProyecto.save();
+    res.status(201).json({ message: 'Proyecto creado', proyecto: nuevoProyecto });
+  } catch (err) {
+    res.status(500).json({ message: 'Error al crear proyecto', error: err.message });
   }
 });
 

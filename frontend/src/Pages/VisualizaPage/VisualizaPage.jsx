@@ -8,10 +8,11 @@ import { useNavigate } from 'react-router-dom';
 import './VisualizaPage.css';
 
 const ESTADOS = [
-  'Activo',
-  'Formulación',
-  'Evaluación',
-  'Finalizado'
+  'formulacion',
+  'evaluacion',
+  'activo',
+  'inactivo',
+  'finalizado'
 ];
 
 function VisualizaPage() {
@@ -21,6 +22,7 @@ function VisualizaPage() {
   const [proyectos, setProyectos] = useState([]);
   const [estadosProyectos, setEstadosProyectos] = useState({});
   const navigate = useNavigate();
+  const [loadingGuardar, setLoadingGuardar] = useState({});
 
   // Redirección si no hay sesión iniciada
   useEffect(() => {
@@ -67,18 +69,36 @@ function VisualizaPage() {
   };
 
   const handleGuardarEstado = async (proy) => {
-    const nuevoEstado = estadosProyectos[proy._id]?.estado || proy.estado || 'Activo';
+    const nuevoEstado = estadosProyectos[proy._id]?.estado || proy.estado || 'formulacion';
     const observacion = estadosProyectos[proy._id]?.observacion || '';
-    // Actualiza en backend
-    await fetch(`http://localhost:3001/api/proyectos/${proy._id}/estado`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ estado: nuevoEstado, observacion })
-    });
-    // Refresca proyectos
-    fetch('http://localhost:3001/api/proyectos')
-      .then(res => res.json())
-      .then(data => setProyectos(data));
+    if (!observacion.trim()) {
+      alert('La observación es obligatoria para cambiar el estado.');
+      return;
+    }
+    if ((proy.estado || 'formulacion') === nuevoEstado) {
+      alert('Este estado ya está guardado.');
+      return;
+    }
+    setLoadingGuardar(prev => ({ ...prev, [proy._id]: true }));
+    try {
+      const res = await fetch(`http://localhost:3001/api/proyectos/${proy._id}/estado`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado, observacion })
+      });
+      if (res.ok) {
+        alert('¡Estado actualizado exitosamente!');
+        fetch('http://localhost:3001/api/proyectos')
+          .then(res => res.json())
+          .then(data => setProyectos(data));
+      } else {
+        alert('No se pudo actualizar el estado en la base de datos.');
+      }
+    } catch (err) {
+      alert('Error de conexión con el servidor.');
+    } finally {
+      setLoadingGuardar(prev => ({ ...prev, [proy._id]: false }));
+    }
   };
 
   // Renderiza la lista de proyectos
@@ -114,7 +134,7 @@ function VisualizaPage() {
                   >
                     {ESTADOS.map((op, idx) => (
                       <option key={op} value={op} disabled={idx > idxActual + 1 || idx < idxActual}>
-                        {op}
+                        {op.charAt(0).toUpperCase() + op.slice(1)}
                       </option>
                     ))}
                   </select>
@@ -126,31 +146,11 @@ function VisualizaPage() {
                   />
                   <button
                     className="visualiza-btn visualiza-btn-admin visualiza-btn-guardar-estado"
-                    onClick={async () => {
-                      const nuevoEstado = estadosProyectos[proy._id]?.estado || proy.estado || 'Activo';
-                      const observacion = estadosProyectos[proy._id]?.observacion || '';
-                      // Lógica de guardado con control de error
-                      const res = await fetch(`http://localhost:3001/api/proyectos/${proy._id}/estado`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ estado: nuevoEstado, observacion })
-                      });
-                      if (res.ok) {
-                        // Solo refresca si el backend responde OK
-                        fetch('http://localhost:3001/api/proyectos')
-                          .then(res => res.json())
-                          .then(data => setProyectos(data));
-                      } else {
-                        // Si falla, NO cambia el estado en UI y muestra alerta
-                        alert('No se pudo actualizar el estado en la base de datos.');
-                        // Opcional: refresca para mantener sincronizado
-                        fetch('http://localhost:3001/api/proyectos')
-                          .then(res => res.json())
-                          .then(data => setProyectos(data));
-                      }
-                    }}
+                    style={{ opacity: loadingGuardar[proy._id] ? 0.6 : 1, pointerEvents: loadingGuardar[proy._id] ? 'none' : 'auto' }}
+                    disabled={loadingGuardar[proy._id]}
+                    onClick={() => handleGuardarEstado(proy)}
                   >
-                    Guardar
+                    {loadingGuardar[proy._id] ? 'Guardando...' : 'Guardar'}
                   </button>
                 </div>
               )}
@@ -180,6 +180,16 @@ function VisualizaPage() {
               className="visualiza-input-busqueda"
             />
           </div>
+          {/* Botón Crear Proyecto solo para docentes */}
+          {rol === 'docente' && (
+            <button
+              className="visualiza-btn"
+              style={{ marginBottom: 16, marginLeft: 8 }}
+              onClick={() => navigate('/createproject')}
+            >
+              Crear Proyecto
+            </button>
+          )}
         </div>
         {rol === 'coordinador' ? (
           // Solo una lista general para coordinador
@@ -215,9 +225,9 @@ function VisualizaPage() {
       </div>
       {/* Panel lateral solo para coordinador */}
       {rol === 'coordinador' && (
-        <aside className="visualiza-panel visualiza-panel-lateral">
+        <div style={{ marginTop: '2rem', width: '100%' }}>
           <GestionUsuarios />
-        </aside>
+        </div>
       )}
     </div>
   );

@@ -143,10 +143,10 @@ const Login = () => {
               fullWidth
               type="submit"
               sx={{
-                bgcolor: 'var(--color-accent)',
+                bgcolor: 'var(--color-primary)',
                 color: 'white',
                 '&:hover': {
-                  bgcolor: 'var(--color-primary)',
+                  bgcolor: 'var(--color-accent)',
                 },
                 fontWeight: 600,
               }}

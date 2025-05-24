@@ -1,32 +1,33 @@
 /* GestionUsuarios.css */
 
-
-.visualiza-admin-panel {
+/* Panel de gestión de usuarios */
+.gestion-usuarios-panel {
   background: var(--color-surface);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px 0 var(--color-border);
-  padding: 1.5rem 1rem;
+  border-radius: 14px;
+  box-shadow: 0 2px 16px var(--color-border);
+  padding: 32px 24px 24px 24px;
+  margin: 0 auto;
   margin-top: 2rem;
+  max-width: 520px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+  align-items: center;
 }
-
-.visualiza-admin-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
+.gestion-usuarios-title {
+  font-size: 1.2rem;
+  font-weight: 700;
   color: var(--color-primary);
+  margin-bottom: 0.5rem;
 }
-
-.visualiza-admin-acciones {
+.gestion-usuarios-acciones {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+  gap: 1rem;
   margin-bottom: 1rem;
+  justify-content: center;
 }
-
-.visualiza-btn-admin {
+.gestion-btn {
   background: var(--color-primary);
   color: #fff;
   border: none;
@@ -34,20 +35,93 @@
   padding: 10px 18px;
   font-weight: 600;
   font-size: 1rem;
+  cursor: pointer;
   transition: background 0.2s;
   letter-spacing: 0.5px;
 }
-.visualiza-btn-admin:hover {
+.gestion-btn:hover {
   background: var(--color-accent);
 }
-
-@media (max-width: 600px) {
-  .visualiza-admin-panel {
-    padding: 1rem 0.5rem;
-    gap: 1rem;
+.gestion-btn-auto {
+  background: var(--color-accent);
+  color: #fff;
+}
+.gestion-btn-auto:hover {
+  background: var(--color-primary);
+}
+.gestion-btn-eliminar {
+  background: #e74c3c;
+  color: #fff;
+}
+.gestion-btn-eliminar:hover {
+  background: #c0392b;
+}
+.gestion-btn-buscar {
+  background: var(--color-accent);
+  color: #fff;
+}
+.gestion-btn-buscar:hover {
+  background: var(--color-primary);
+}
+.gestion-usuarios-form-contenedor {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.gestion-usuarios-form {
+  background: var(--color-surface);
+  border-radius: 10px;
+  box-shadow: 0 1px 6px var(--color-border);
+  padding: 18px 12px;
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+  max-width: 420px;
+}
+.gestion-usuarios-error {
+  color: #e74c3c;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: -0.5rem;
+}
+.gestion-form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+.gestion-form-row input,
+.gestion-form-row select {
+  width: 100%;
+  padding: 0.5em 1em;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 1rem;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  transition: border 0.2s;
+}
+.gestion-form-row input:focus,
+.gestion-form-row select:focus {
+  border-color: var(--color-primary);
+}
+.gestion-usuarios-mensaje {
+  color: var(--color-accent);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  margin-top: -0.5rem;
+}
+@media (max-width: 700px) {
+  .gestion-usuarios-panel {
+    padding: 12px 2vw 10px 2vw;
+    max-width: 98vw;
   }
-  .visualiza-admin-acciones {
-    flex-direction: column;
-    gap: 0.5rem;
+  .gestion-usuarios-form {
+    max-width: 98vw;
   }
 }

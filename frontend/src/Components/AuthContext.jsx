@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 
 // Crea el contexto
 export const AuthContext = createContext({ rol: null, setRol: () => {} });
@@ -17,6 +17,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('rol');
     }
   };
+
+  // Limpiar sesión al recargar la página
+  useEffect(() => {
+    localStorage.removeItem('rol');
+    setRol(null);
+  }, []);
 
   return (
     <AuthContext.Provider value={{ rol, setRol: handleSetRol }}>

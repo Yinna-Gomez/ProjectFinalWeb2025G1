@@ -6,18 +6,20 @@
   border-radius: 14px;
   box-shadow: 0 2px 16px var(--color-border);
   padding: 40px 36px 32px 36px;
-  max-width: 700px;
+  max-width: 900px;
   margin: 40px auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
+  min-height: 80vh;
 }
 
 .createproject-title {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: var(--color-primary);
   margin-bottom: 1rem;
+  text-align: center;
 }
 
 .createproject-form {
@@ -35,7 +37,16 @@
   border: none;
   cursor: pointer;
   transition: background 0.2s;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
 }
 .createproject-btn:hover {
   background: var(--color-accent);
+}
+
+@media (max-width: 900px) {
+  .createproject-container {
+    max-width: 99vw;
+    padding: 16px 2vw 16px 2vw;
+  }
 }
