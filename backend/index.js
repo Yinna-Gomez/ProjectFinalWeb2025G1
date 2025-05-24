@@ -1,17 +1,122 @@
+/**
+ * @fileoverview Servidor backend para la aplicación de gestión de proyectos
+ * @requires express
+ * @requires mongoose
+ * @requires cors
+ * @requires jsonwebtoken
+ * @requires dotenv
+ * @requires https
+ * @requires fs
+ */
+
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import https from 'https';
+import fs from 'fs';
 import User from './Models/user.js';
 import Proyecto from './Models/proyecto.js';
 
+// Configuración de variables de entorno
+dotenv.config();
+
 const app = express();
-app.use(cors());
+
+// Configuración de CORS para desarrollo
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? process.env.FRONTEND_URL 
+    : ['http://localhost:3000', 'http://localhost:5173'], // Permitir ambos puertos en desarrollo
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
-mongoose.connect('mongodb://localhost:27017/ondas-col');
+// Constantes de configuración
+const JWT_SECRET = process.env.JWT_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const TOKEN_EXPIRATION = '1h';
+const REFRESH_EXPIRATION = '7d';
 
+// Almacén temporal de refresh tokens (en producción usar Redis)
+const refreshTokens = new Set();
 
-// Ruta de login
+/**
+ * Middleware para verificar el token JWT
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ * @param {Function} next - Next middleware function
+ */
+const verificarToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];
+  if (!token) return res.status(401).json({ message: 'No token provided' });
+  
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.usuario = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid token' });
+  }
+};
+
+/**
+ * Genera un nuevo token de acceso
+ * @param {Object} user - Objeto usuario
+ * @returns {String} Token JWT
+ */
+const generarAccessToken = (user) => {
+  return jwt.sign(
+    { 
+      usuario: user.usuario,
+      rol: user.rol,
+      nombre: user.nombre,
+      apellido: user.apellido,
+      correo: user.correo
+    },
+    JWT_SECRET,
+    { expiresIn: TOKEN_EXPIRATION }
+  );
+};
+
+/**
+ * Genera un refresh token
+ * @param {Object} user - Objeto usuario
+ * @returns {String} Refresh token
+ */
+const generarRefreshToken = (user) => {
+  const refreshToken = jwt.sign(
+    { usuario: user.usuario },
+    REFRESH_SECRET,
+    { expiresIn: REFRESH_EXPIRATION }
+  );
+  refreshTokens.add(refreshToken);
+  return refreshToken;
+};
+
+// Conexión a MongoDB
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ondas-col')
+  .then(() => console.log('Conectado a MongoDB'))
+  .catch(err => console.error('Error conectando a MongoDB:', err));
+
+/**
+ * @route GET /api/verify-token
+ * @desc Verificar validez del token
+ * @access Private
+ */
+app.get('/api/verify-token', verificarToken, (req, res) => {
+  res.json({ valid: true, usuario: req.usuario });
+});
+
+/**
+ * @route POST /api/login
+ * @desc Autenticar usuario y generar tokens
+ * @access Public
+ */
 app.post('/api/login', async (req, res) => {
   const { usuario, contrasenia } = req.body;
   try {
@@ -20,26 +125,68 @@ app.post('/api/login', async (req, res) => {
     if (user.contrasenia !== contrasenia) {
       return res.status(401).json({ message: 'Contraseña incorrecta' });
     }
+    
+    const accessToken = generarAccessToken(user);
+    const refreshToken = generarRefreshToken(user);
+
     res.json({
       message: 'Login exitoso',
+      accessToken,
+      refreshToken,
       usuario: user.usuario,
       rol: user.rol,
       nombre: user.nombre,
       apellido: user.apellido,
       correo: user.correo,
+      id: user._id
     });
   } catch (err) {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 });
 
-app.get('/api/usuarios', async (req, res) => {
+/**
+ * @route POST /api/refresh
+ * @desc Renovar token de acceso usando refresh token
+ * @access Public
+ */
+app.post('/api/refresh', (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken || !refreshTokens.has(refreshToken)) {
+    return res.status(401).json({ message: 'Invalid refresh token' });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, REFRESH_SECRET);
+    User.findOne({ usuario: decoded.usuario })
+      .then(user => {
+        if (!user) return res.status(404).json({ message: 'Usuario no encontrado' });
+        const accessToken = generarAccessToken(user);
+        res.json({ accessToken });
+      });
+  } catch (err) {
+    return res.status(401).json({ message: 'Invalid refresh token' });
+  }
+});
+
+/**
+ * @route POST /api/logout
+ * @desc Invalidar refresh token
+ * @access Public
+ */
+app.post('/api/logout', (req, res) => {
+  const { refreshToken } = req.body;
+  refreshTokens.delete(refreshToken);
+  res.json({ message: 'Logout exitoso' });
+});
+
+// Rutas protegidas
+app.get('/api/usuarios', verificarToken, async (req, res) => {
   const usuarios = await User.find({});
   res.json(usuarios);
 });
 
-// Obtener todos los proyectos
-app.get('/api/proyectos', async (req, res) => {
+app.get('/api/proyectos', verificarToken, async (req, res) => {
   try {
     const proyectos = await Proyecto.find({});
     res.json(proyectos);
@@ -151,9 +298,13 @@ app.delete('/api/usuarios/:id', async (req, res) => {
 });
 
 // Crear un nuevo proyecto
-app.post('/api/proyectos', async (req, res) => {
+app.post('/api/proyectos', verificarToken, async (req, res) => {
   try {
-    const nuevoProyecto = new Proyecto(req.body);
+    const proyectoData = {
+      ...req.body,
+      creadoPor: req.usuario.usuario // Usar el usuario del token
+    };
+    const nuevoProyecto = new Proyecto(proyectoData);
     await nuevoProyecto.save();
     res.status(201).json({ message: 'Proyecto creado', proyecto: nuevoProyecto });
   } catch (err) {
@@ -161,4 +312,19 @@ app.post('/api/proyectos', async (req, res) => {
   }
 });
 
-app.listen(3001, () => console.log('Servidor backend en puerto 3001'));
+// Configuración de HTTPS para producción
+if (process.env.NODE_ENV === 'production') {
+  const httpsOptions = {
+    key: fs.readFileSync(process.env.SSL_KEY_PATH),
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
+  };
+  
+  https.createServer(httpsOptions, app)
+    .listen(process.env.PORT || 3001, () => {
+      console.log(`Servidor HTTPS corriendo en puerto ${process.env.PORT || 3001}`);
+    });
+} else {
+  app.listen(process.env.PORT || 3001, () => {
+    console.log(`Servidor HTTP corriendo en puerto ${process.env.PORT || 3001}`);
+  });
+}

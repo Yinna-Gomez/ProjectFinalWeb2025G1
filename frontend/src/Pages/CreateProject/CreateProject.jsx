@@ -48,6 +48,7 @@ const CreateProject = () => {
   const [error, setError] = useState('');
   const [confirmar, setConfirmar] = useState(false);
   const { rol } = useContext(AuthContext);
+  const usuarioActual = localStorage.getItem('usuario');
   const navigate = useNavigate();
 
   // Protección de ruta: solo docente
@@ -188,6 +189,7 @@ const CreateProject = () => {
       historialestado: [{ estado: 'formulacion', fecha: new Date().toISOString(), observacion: '' }],
       archivos: [],
       estado: 'formulacion',
+      creadoPor: usuarioActual || '',
     };
     // Envía el proyecto a la colección proyectos
     const res = await fetch('http://localhost:3001/api/proyectos', {

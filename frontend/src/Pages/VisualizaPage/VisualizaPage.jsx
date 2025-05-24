@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Página principal de visualización de proyectos
+ * @requires react
+ * @requires @mui/material
+ * @requires react-router-dom
+ */
+
 import React, { useState, useContext, useEffect } from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -15,14 +22,89 @@ const ESTADOS = [
   'finalizado'
 ];
 
+// Constante para la URL del backend
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
+/**
+ * Componente principal de visualización de proyectos
+ * @returns {JSX.Element} Componente VisualizaPage
+ */
 function VisualizaPage() {
   const [tab, setTab] = useState(0);
   const [busqueda, setBusqueda] = useState('');
-  const { rol } = useContext(AuthContext);
+  const { rol, usuario, refreshToken } = useContext(AuthContext);
   const [proyectos, setProyectos] = useState([]);
   const [estadosProyectos, setEstadosProyectos] = useState({});
   const navigate = useNavigate();
   const [loadingGuardar, setLoadingGuardar] = useState({});
+
+  /**
+   * Función para renovar el token de acceso
+   * @returns {Promise<string>} Nuevo token de acceso
+   */
+  const renovarToken = async () => {
+    try {
+      const res = await fetch(`${API_URL}/api/refresh`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify({ refreshToken })
+      });
+      if (!res.ok) throw new Error('Error renovando token');
+      const data = await res.json();
+      localStorage.setItem('token', data.accessToken);
+      return data.accessToken;
+    } catch (err) {
+      console.error('Error renovando token:', err);
+      navigate('/login');
+      return null;
+    }
+  };
+
+  /**
+   * Función para hacer peticiones con manejo de token expirado
+   * @param {string} url - URL de la petición
+   * @param {Object} options - Opciones de la petición
+   * @returns {Promise<Response>} Respuesta de la petición
+   */
+  const fetchConToken = async (url, options = {}) => {
+    let token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+      return null;
+    }
+
+    const headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json'
+    };
+
+    try {
+      let res = await fetch(url, { 
+        ...options, 
+        headers,
+        credentials: 'include'
+      });
+      
+      if (res.status === 401) {
+        // Token expirado, intentar renovar
+        token = await renovarToken();
+        if (!token) return null;
+        
+        headers['Authorization'] = `Bearer ${token}`;
+        res = await fetch(url, { ...options, headers, credentials: 'include' });
+      }
+      
+      return res;
+    } catch (err) {
+      console.error('Error en la petición:', err);
+      return null;
+    }
+  };
 
   // Redirección si no hay sesión iniciada
   useEffect(() => {
@@ -33,18 +115,25 @@ function VisualizaPage() {
 
   // Fetch proyectos desde backend
   useEffect(() => {
-    fetch('http://localhost:3001/api/proyectos')
-      .then(res => res.json())
-      .then(data => {
+    const cargarProyectos = async () => {
+      try {
+        const res = await fetchConToken(`${API_URL}/api/proyectos`);
+        if (!res) return;
+        
+        const data = await res.json();
         setProyectos(data);
-        // Inicializa estadosProyectos con los estados actuales de la BD
         const estados = {};
         data.forEach(p => {
           estados[p._id] = { estado: p.estado || '', observacion: '' };
         });
         setEstadosProyectos(estados);
-      });
-  }, []);
+      } catch (err) {
+        console.error('Error cargando proyectos:', err);
+      }
+    };
+
+    cargarProyectos();
+  }, [navigate]);
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
@@ -68,9 +157,14 @@ function VisualizaPage() {
     }));
   };
 
+  /**
+   * Maneja el cambio de estado de un proyecto
+   * @param {Object} proy - Proyecto a actualizar
+   */
   const handleGuardarEstado = async (proy) => {
     const nuevoEstado = estadosProyectos[proy._id]?.estado || proy.estado || 'formulacion';
     const observacion = estadosProyectos[proy._id]?.observacion || '';
+    
     if (!observacion.trim()) {
       alert('La observación es obligatoria para cambiar el estado.');
       return;
@@ -79,18 +173,27 @@ function VisualizaPage() {
       alert('Este estado ya está guardado.');
       return;
     }
+
     setLoadingGuardar(prev => ({ ...prev, [proy._id]: true }));
     try {
-      const res = await fetch(`http://localhost:3001/api/proyectos/${proy._id}/estado`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ estado: nuevoEstado, observacion })
-      });
+      const res = await fetchConToken(
+        `${API_URL}/api/proyectos/${proy._id}/estado`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ estado: nuevoEstado, observacion })
+        }
+      );
+
+      if (!res) return;
+
       if (res.ok) {
         alert('¡Estado actualizado exitosamente!');
-        fetch('http://localhost:3001/api/proyectos')
-          .then(res => res.json())
-          .then(data => setProyectos(data));
+        const data = await fetchConToken(`${API_URL}/api/proyectos`);
+        if (data) {
+          const proyectos = await data.json();
+          setProyectos(proyectos);
+        }
       } else {
         alert('No se pudo actualizar el estado en la base de datos.');
       }
@@ -166,6 +269,14 @@ function VisualizaPage() {
     p.titulo && p.titulo.toLowerCase().includes(busqueda.toLowerCase())
   );
 
+  // Filtrado para docente: mis proyectos y otros proyectos
+  let misProyectos = [];
+  let otrosProyectos = [];
+  if (rol === 'docente') {
+    misProyectos = proyectosFiltrados.filter(p => p.creadoPor === usuario);
+    otrosProyectos = proyectosFiltrados.filter(p => p.creadoPor !== usuario);
+  }
+
   // Para el coordinador, mostrar una sola lista general
   return (
     <div className="visualiza-panel-container visualiza-panel-wide visualiza-panel-flex">
@@ -211,14 +322,14 @@ function VisualizaPage() {
             <div className="visualiza-tab-content">
               {tab === 0 && (
                 <>
-                  {renderProyectos(proyectosFiltrados)}
+                  {renderProyectos(misProyectos)}
                   <div className="visualiza-acciones">
                     <button className="visualiza-btn">Registrar avance</button>
                     <button className="visualiza-btn">Generar reportes</button>
                   </div>
                 </>
               )}
-              {tab === 1 && renderProyectos([])}
+              {tab === 1 && renderProyectos(otrosProyectos)}
             </div>
           </>
         )}

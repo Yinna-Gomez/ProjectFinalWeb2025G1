@@ -1,31 +1,96 @@
 import React, { createContext, useState, useEffect } from 'react';
 
 // Crea el contexto
-export const AuthContext = createContext({ rol: null, setRol: () => {} });
+export const AuthContext = createContext();
 
 // Proveedor del contexto
 export const AuthProvider = ({ children }) => {
-  // Por defecto, rol null. Inicializa desde localStorage si existe
-  const [rol, setRol] = useState(localStorage.getItem('rol') || null);
+  const [rol, setRol] = useState(localStorage.getItem('rol') || '');
+  const [usuario, setUsuario] = useState(localStorage.getItem('usuario') || '');
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
 
-  // Cuando el rol cambie, actualiza localStorage o lo elimina si es null
-  const handleSetRol = (nuevoRol) => {
-    setRol(nuevoRol);
-    if (nuevoRol) {
-      localStorage.setItem('rol', nuevoRol);
-    } else {
+  // Función para iniciar sesión
+  const login = (userData) => {
+    setRol(userData.rol);
+    setUsuario(userData.usuario);
+    setToken(userData.accessToken);
+    setRefreshToken(userData.refreshToken);
+
+    localStorage.setItem('rol', userData.rol);
+    localStorage.setItem('usuario', userData.usuario);
+    localStorage.setItem('token', userData.accessToken);
+    localStorage.setItem('refreshToken', userData.refreshToken);
+  };
+
+  // Función para cerrar sesión
+  const logout = async () => {
+    try {
+      // Intentar invalidar el refresh token en el servidor
+      if (refreshToken) {
+        await fetch('http://localhost:3001/api/logout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ refreshToken })
+        });
+      }
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    } finally {
+      // Limpiar estado local
+      setRol('');
+      setUsuario('');
+      setToken('');
+      setRefreshToken('');
+
+      // Limpiar localStorage
       localStorage.removeItem('rol');
+      localStorage.removeItem('usuario');
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
     }
   };
 
-  // Limpiar sesión al recargar la página
+  // Verificar token al cargar
   useEffect(() => {
-    localStorage.removeItem('rol');
-    setRol(null);
-  }, []);
+    const verificarToken = async () => {
+      if (!token) return;
+
+      try {
+        const res = await fetch('http://localhost:3001/api/verify-token', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) {
+          // Si el token no es válido, intentar renovar
+          const refreshRes = await fetch('http://localhost:3001/api/refresh', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ refreshToken })
+          });
+
+          if (refreshRes.ok) {
+            const data = await refreshRes.json();
+            setToken(data.accessToken);
+            localStorage.setItem('token', data.accessToken);
+          } else {
+            // Si no se puede renovar, cerrar sesión
+            logout();
+          }
+        }
+      } catch (error) {
+        console.error('Error verificando token:', error);
+        logout();
+      }
+    };
+
+    verificarToken();
+  }, [token, refreshToken]);
 
   return (
-    <AuthContext.Provider value={{ rol, setRol: handleSetRol }}>
+    <AuthContext.Provider value={{ rol, usuario, token, refreshToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
