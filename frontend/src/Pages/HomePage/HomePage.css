@@ -106,6 +106,7 @@
   background: var(--color-surface);
   border-radius: 10px;
   box-shadow: 0 1px 8px var(--color-border);
+  line-height: 1.7;
 }
 
 .homepage-section:first-of-type {
@@ -121,4 +122,66 @@
   font-size: 1.7rem;
   font-weight: 700;
   margin-bottom: 12px;
+}
+
+.homepage-section p {
+  line-height: 1.7;
+  font-size: 1.08rem;
+  margin-bottom: 0;
+}
+
+@media (max-width: 600px) {
+  .homepage-slider-section {
+    max-width: 98vw;
+    margin: 12px auto;
+    border-radius: 8px;
+  }
+  .homepage-slider-container {
+    height: 180px;
+    min-height: 120px;
+  }
+  .homepage-slider-img {
+    border-radius: 8px;
+    min-height: 120px;
+    max-width: 100vw;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .homepage-slider-overlay {
+    padding: 12px;
+    font-size: 0.95rem;
+    background: rgba(44, 62, 80, 0.18);
+    align-items: flex-start;
+    justify-content: flex-end;
+    min-height: 60px;
+  }
+  .homepage-slider-title {
+    font-size: 1.1rem;
+  }
+  .homepage-slider-desc {
+    font-size: 0.95rem;
+  }
+  .homepage-slider-btn.left {
+    left: -18px;
+  }
+  .homepage-slider-btn.right {
+    right: -18px;
+  }
+  .homepage-section {
+    padding: 22px 14px 28px 14px;
+    margin-top: 18px;
+    margin-bottom: 18px;
+    line-height: 1.8;
+  }
+  .homepage-section-title {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+  }
+  .homepage-section p {
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 0;
+  }
 }

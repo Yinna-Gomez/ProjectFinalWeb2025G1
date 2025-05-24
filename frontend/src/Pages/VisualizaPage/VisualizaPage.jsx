@@ -264,9 +264,10 @@ function VisualizaPage() {
     );
   };
 
-  // Filtrado por búsqueda (nombre de proyecto)
+  // Filtrado por búsqueda (nombre de proyecto o institución)
   const proyectosFiltrados = proyectos.filter(p =>
-    p.titulo && p.titulo.toLowerCase().includes(busqueda.toLowerCase())
+    (p.titulo && p.titulo.toLowerCase().includes(busqueda.toLowerCase())) ||
+    (p.institucion && p.institucion.toLowerCase().includes(busqueda.toLowerCase()))
   );
 
   // Filtrado para docente: mis proyectos y otros proyectos

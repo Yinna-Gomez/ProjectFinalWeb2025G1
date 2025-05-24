@@ -96,6 +96,19 @@ const CreateProject = () => {
       alert('La fecha de inicio no puede ser mayor que la fecha de fin');
       return;
     }
+    // Validar que no se solapen fechas con otras actividades
+    const nuevaInicio = new Date(actividad.fechainicio);
+    const nuevaFin = new Date(actividad.fechafin);
+    const solapada = cronograma.some(a => {
+      const inicio = new Date(a.fechainicio);
+      const fin = new Date(a.fechafin);
+      // Se solapan si el rango nuevo empieza antes de que termine una existente y termina después de que empieza
+      return (nuevaInicio <= fin && nuevaFin >= inicio);
+    });
+    if (solapada) {
+      alert('Las fechas de esta actividad se solapan con otra ya existente en el cronograma. Por favor, elige un rango diferente.');
+      return;
+    }
     setCronograma(prev => [...prev, actividad]);
     setModalCronograma(false);
   };
@@ -192,9 +205,13 @@ const CreateProject = () => {
       creadoPor: usuarioActual || '',
     };
     // Envía el proyecto a la colección proyectos
+    const token = localStorage.getItem('token');
     const res = await fetch('http://localhost:3001/api/proyectos', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify(proyectoData),
     });
     if (res.ok) {
