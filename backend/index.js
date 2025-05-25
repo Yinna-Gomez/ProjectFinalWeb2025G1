@@ -19,6 +19,9 @@ import fs from 'fs';
 import User from './Models/user.js';
 import Proyecto from './Models/proyecto.js';
 import avancesRoutes from './routes/avances.js';
+import proyectosRoutes from './routes/proyectos.js';
+import usuariosRoutes from './routes/usuarios.js';
+import authRoutes from './routes/auth.js';
 
 // Configuración de variables de entorno
 dotenv.config();
@@ -36,6 +39,12 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 app.use(express.json());
+
+// Rutas
+app.use('/api/auth', authRoutes);
+app.use('/api/usuarios', usuariosRoutes);
+app.use('/api/proyectos', proyectosRoutes);
+app.use('/api/proyectos', avancesRoutes);
 
 // Constantes de configuración
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -339,8 +348,11 @@ app.post('/api/proyectos', verificarToken, async (req, res) => {
   }
 });
 
-// Rutas de avances
-app.use('/api/proyectos', verificarToken, avancesRoutes);
+// Log global para cada petición entrante
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  next();
+});
 
 // Configuración de manejo de errores global
 app.use((err, req, res, next) => {
@@ -349,6 +361,14 @@ app.use((err, req, res, next) => {
     mensaje: 'Error interno del servidor', 
     error: process.env.NODE_ENV === 'development' ? err.message : 'Error interno'
   });
+});
+
+// Manejo global de errores no capturados
+process.on('uncaughtException', (err) => {
+  console.error('Excepción no capturada:', err);
+});
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Rechazo de promesa no manejado:', reason);
 });
 
 // Configuración de HTTPS para producción

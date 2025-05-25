@@ -7,6 +7,12 @@ const roles = [
   { value: 'integrante', label: 'Integrante (Estudiante)' },
 ];
 
+const tiposIdentificacion = [
+  { value: 'cc', label: 'Cédula de Ciudadanía' },
+  { value: 'ti', label: 'Tarjeta de Identidad' },
+  { value: 'ce', label: 'Cédula de Extranjería' },
+];
+
 const initialForm = {
   usuario: '',
   contrasenia: '',
@@ -168,6 +174,9 @@ const GestionUsuarios = () => {
       const data = await res.json();
       if (res.ok) {
         setMensaje('Usuario actualizado exitosamente');
+        setForm(initialForm);
+        setUsuarioId('');
+        setBusqueda('');
       } else {
         setError(data.message || 'Error al actualizar usuario');
       }
@@ -195,6 +204,7 @@ const GestionUsuarios = () => {
         setMensaje('Usuario eliminado exitosamente');
         setForm(initialForm);
         setUsuarioId('');
+        setBusqueda('');
       } else {
         setError('No se pudo eliminar el usuario');
       }
@@ -238,7 +248,10 @@ const GestionUsuarios = () => {
               </select>
             </div>
             <div className="gestion-form-row">
-              <input name="tipoIdentificacion" value={form.tipoIdentificacion} onChange={handleChange} placeholder="Tipo de identificación" required />
+              <select name="tipoIdentificacion" value={form.tipoIdentificacion} onChange={handleChange} required>
+                <option value="">Selecciona tipo de identificación</option>
+                {tiposIdentificacion.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+              </select>
               <input name="identificacion" value={form.identificacion} onChange={handleChange} placeholder="Identificación" required />
             </div>
             {form.rol === 'integrante' && (
@@ -276,7 +289,10 @@ const GestionUsuarios = () => {
                   </select>
                 </div>
                 <div className="gestion-form-row">
-                  <input name="tipoIdentificacion" value={form.tipoIdentificacion} onChange={handleChange} placeholder="Tipo de identificación" required />
+                  <select name="tipoIdentificacion" value={form.tipoIdentificacion} onChange={handleChange} required>
+                    <option value="">Selecciona tipo de identificación</option>
+                    {tiposIdentificacion.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  </select>
                   <input name="identificacion" value={form.identificacion} onChange={handleChange} placeholder="Identificación" required />
                 </div>
                 {form.rol === 'integrante' && (

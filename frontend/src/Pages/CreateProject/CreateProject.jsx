@@ -89,11 +89,11 @@ const CreateProject = () => {
   // Agregar actividad al cronograma
   const handleAddActividad = () => {
     if (!actividad.actividad || !actividad.fechainicio || !actividad.fechafin) {
-      alert('Todos los campos de la actividad son obligatorios');
+      setError('Todos los campos de la actividad son obligatorios');
       return;
     }
     if (new Date(actividad.fechainicio) > new Date(actividad.fechafin)) {
-      alert('La fecha de inicio no puede ser mayor que la fecha de fin');
+      setError('La fecha de inicio no puede ser mayor que la fecha de fin');
       return;
     }
     // Validar que no se solapen fechas con otras actividades
@@ -106,7 +106,7 @@ const CreateProject = () => {
       return (nuevaInicio <= fin && nuevaFin >= inicio);
     });
     if (solapada) {
-      alert('Las fechas de esta actividad se solapan con otra ya existente en el cronograma. Por favor, elige un rango diferente.');
+      setError('Las fechas de esta actividad se solapan con otra ya existente en el cronograma. Por favor, elige un rango diferente.');
       return;
     }
     setCronograma(prev => [...prev, actividad]);
@@ -119,7 +119,7 @@ const CreateProject = () => {
     setMensaje('');
     // Validación de campos del integrante
     if (!integranteForm.firstName || !integranteForm.lastName || !integranteForm.idType || !integranteForm.idNumber || !integranteForm.grade || !integranteForm.correo) {
-      alert('Todos los campos del integrante son obligatorios');
+      setError('Todos los campos del integrante son obligatorios');
       return;
     }
     // Genera usuario y contraseña únicos
@@ -155,7 +155,7 @@ const CreateProject = () => {
       estado: 'activo',
     }]);
     setModalOpen(false);
-    alert('Integrante agregado correctamente');
+    setMensaje('Integrante agregado correctamente');
   };
 
   // Validación de campos del proyecto
@@ -178,7 +178,6 @@ const CreateProject = () => {
     setMensaje('');
     const errorMsg = validarProyecto();
     if (errorMsg) {
-      alert(errorMsg);
       setError(errorMsg);
       return;
     }
@@ -223,13 +222,12 @@ const CreateProject = () => {
           body: JSON.stringify(usuario),
         });
       }
-      alert('Proyecto y usuarios creados exitosamente');
+      setMensaje('Proyecto y usuarios creados exitosamente');
       setProject(initialProject);
       setIntegrantes([]);
       setUsuariosTemp([]);
       setCronograma([]);
     } else {
-      alert('No se pudo crear el proyecto');
       setError('No se pudo crear el proyecto');
     }
   };

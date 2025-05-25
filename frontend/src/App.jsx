@@ -13,12 +13,12 @@ import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import "./App.css";
 
 // Componente para proteger rutas
-const ProtectedRoute = ({ children, allowedRoles, redirectTo = "/login" }) => {
+const ProtectedRoute = ({ children, allowedRoles, redirectTo = "/" }) => {
   const token = localStorage.getItem('token');
   const rol = localStorage.getItem('rol');
 
   if (!token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   if (allowedRoles && !allowedRoles.includes(rol)) {
@@ -71,7 +71,7 @@ function App() {
 
               {/* Ruta para detalles del proyecto */}
               <Route 
-                path="/detailproject" 
+                path="/detailproject/:id" 
                 element={
                   <ProtectedRoute>
                     <DetailProject />

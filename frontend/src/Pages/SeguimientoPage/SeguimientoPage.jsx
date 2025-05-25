@@ -10,6 +10,7 @@ const SeguimientoPage = () => {
   const [error, setError] = useState('');
   const [proyecto, setProyecto] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [mensaje, setMensaje] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -108,7 +109,7 @@ const SeguimientoPage = () => {
       setError('');
       
       // Mostrar mensaje de éxito
-      alert('Avance registrado correctamente');
+      setMensaje('Avance registrado correctamente');
       
       // Recargar proyecto para mostrar el nuevo avance
       const proyectoActualizado = await fetch(`${API_URL}/api/proyectos/${proyectoId}`, {

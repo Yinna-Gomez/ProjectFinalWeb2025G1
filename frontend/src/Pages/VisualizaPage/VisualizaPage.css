@@ -72,23 +72,50 @@
   margin-bottom: 1.5rem;
 }
 
-.visualiza-proyecto-item {
-  padding: 12px 10px;
-  border-radius: 6px;
+.proyecto-item {
+  background: var(--color-surface);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
   cursor: pointer;
-  font-size: 1.08rem;
-  color: var(--color-primary);
-  transition: background 0.18s;
-  margin-bottom: 8px;
+  transition: all 0.2s ease;
   border: 1px solid var(--color-border);
-  background: var(--color-surface, #fff);
-  border-radius: 12px;
-  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.04);
-  padding: 1.2rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
+
+.proyecto-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-color: var(--color-primary);
+}
+
+.proyecto-item h3 {
+  color: var(--color-primary);
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.proyecto-item p {
+  margin: 4px 0;
+  color: var(--color-text);
+  font-size: 0.9rem;
+}
+
+.proyecto-item .estado {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.proyecto-item .estado.formulacion { background: #e3f2fd; color: #1976d2; }
+.proyecto-item .estado.evaluacion { background: #fff3e0; color: #f57c00; }
+.proyecto-item .estado.activo { background: #e8f5e9; color: #2e7d32; }
+.proyecto-item .estado.inactivo { background: #fafafa; color: #616161; }
+.proyecto-item .estado.finalizado { background: #f3e5f5; color: #7b1fa2; }
 
 .visualiza-proyecto-card {
   background: var(--color-surface, #fff);
@@ -108,11 +135,6 @@
   gap: 2.2rem;
   font-size: 1.18rem;
   font-weight: 600;
-}
-
-.visualiza-proyecto-item:hover {
-  background: var(--color-hover);
-  border-color: var(--color-accent);
 }
 
 .visualiza-acciones {
@@ -309,4 +331,144 @@
     gap: 10px;
     align-items: stretch;
   }
+}
+
+.historial-estados {
+  margin-top: 24px;
+  padding: 16px;
+  background: var(--color-surface);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.historial-estados h3 {
+  color: var(--color-primary);
+  margin: 0 0 16px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.historial-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.historial-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: var(--color-background);
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+
+.historial-fecha {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.historial-estado {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.historial-observacion {
+  font-size: 0.9rem;
+  color: var(--color-text);
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.proyecto-header {
+  cursor: pointer;
+  padding: 16px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.proyecto-header:hover {
+  background: var(--color-hover);
+}
+
+.proyecto-controls {
+  margin-top: 12px;
+  padding: 12px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.estado-select {
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.estado-observacion {
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  min-height: 60px;
+  resize: vertical;
+}
+
+.btn-guardar-estado {
+  padding: 8px 16px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-guardar-estado:hover {
+  background: var(--color-accent);
+}
+
+.btn-guardar-estado:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.proyecto-acciones {
+  margin-top: 12px;
+  padding: 12px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.btn-registrar-avance {
+  padding: 8px 16px;
+  background: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-registrar-avance:hover {
+  background: var(--color-primary);
+}
+
+.proyecto-titulo-link {
+  cursor: pointer;
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s, text-decoration 0.2s;
+}
+.proyecto-titulo-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
 }

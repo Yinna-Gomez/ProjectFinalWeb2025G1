@@ -31,7 +31,7 @@ const Header = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/login');
+    navigate('/');
   };
 
   // Botón flotante para volver al panel
@@ -45,6 +45,16 @@ const Header = () => {
     }
   };
 
+  // Menú de navegación principal
+  const navLinks = [
+    { label: 'Inicio', to: '/', onClick: null },
+    ...(!rol ? [
+      { label: 'Misión', to: '#mision', onClick: () => scrollToSection('mision') },
+      { label: 'Visión', to: '#vision', onClick: () => scrollToSection('vision') },
+      { label: 'Acerca de', to: '#acerca-de', onClick: () => scrollToSection('acerca-de') },
+    ] : [])
+  ];
+
   // Menú para móvil
   const mobileMenu = (
     <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
@@ -52,21 +62,6 @@ const Header = () => {
         <ListItem disablePadding>
           <ListItemButton component={Link} to="/" onClick={() => setDrawerOpen(false)}>
             <ListItemText primary="Inicio" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => { scrollToSection('mision'); setDrawerOpen(false); }}>
-            <ListItemText primary="Misión" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => { scrollToSection('vision'); setDrawerOpen(false); }}>
-            <ListItemText primary="Visión" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton onClick={() => { scrollToSection('acerca-de'); setDrawerOpen(false); }}>
-            <ListItemText primary="Acerca de" />
           </ListItemButton>
         </ListItem>
         {rol && (
@@ -99,14 +94,6 @@ const Header = () => {
       </List>
     </Drawer>
   );
-
-  // Menú de navegación principal
-  const navLinks = [
-    { label: 'Inicio', to: '/', onClick: null },
-    { label: 'Misión', to: '#mision', onClick: () => scrollToSection('mision') },
-    { label: 'Visión', to: '#vision', onClick: () => scrollToSection('vision') },
-    { label: 'Acerca de', to: '#acerca-de', onClick: () => scrollToSection('acerca-de') },
-  ];
 
   return (
     <>

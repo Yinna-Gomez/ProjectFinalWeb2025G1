@@ -38,6 +38,8 @@ function VisualizaPage() {
   const navigate = useNavigate();
   const [loadingGuardar, setLoadingGuardar] = useState({});
   const [error, setError] = useState('');
+  const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null);
+  const [mensaje, setMensaje] = useState('');
 
   /**
    * Función para renovar el token de acceso
@@ -60,7 +62,7 @@ function VisualizaPage() {
       return data.accessToken;
     } catch (err) {
       console.error('Error renovando token:', err);
-      navigate('/login');
+      navigate('/');
       return null;
     }
   };
@@ -74,7 +76,7 @@ function VisualizaPage() {
   const fetchConToken = async (url, options = {}) => {
     let token = localStorage.getItem('token');
     if (!token) {
-      navigate('/login');
+      navigate('/');
       return null;
     }
 
@@ -110,7 +112,7 @@ function VisualizaPage() {
   // Redirección si no hay sesión iniciada
   useEffect(() => {
     if (!rol || rol === 'null' || rol === '') {
-      navigate('/login');
+      navigate('/');
     }
   }, [rol, navigate]);
 
@@ -139,7 +141,7 @@ function VisualizaPage() {
       try {
         const token = localStorage.getItem('token');
         if (!token) {
-          navigate('/login');
+          navigate('/');
           return;
         }
 
@@ -190,7 +192,7 @@ function VisualizaPage() {
 
   // Abrir detalle de proyecto
   const handleProyectoClick = (proyecto) => {
-    navigate(`/detailproject?id=${proyecto._id}`);
+    setProyectoSeleccionado(proyecto);
   };
 
   const handleEstadoChange = (id, nuevoEstado) => {
@@ -215,11 +217,11 @@ function VisualizaPage() {
     const observacion = estadosProyectos[proy._id]?.observacion || '';
     
     if (!observacion.trim()) {
-      alert('La observación es obligatoria para cambiar el estado.');
+      setError('La observación es obligatoria para cambiar el estado.');
       return;
     }
     if ((proy.estado || 'formulacion') === nuevoEstado) {
-      alert('Este estado ya está guardado.');
+      setError('Este estado ya está guardado.');
       return;
     }
 
@@ -237,17 +239,18 @@ function VisualizaPage() {
       if (!res) return;
 
       if (res.ok) {
-        alert('¡Estado actualizado exitosamente!');
+        setMensaje('¡Estado actualizado exitosamente!');
         const data = await fetchConToken(`${API_URL}/api/proyectos`);
         if (data) {
           const proyectos = await data.json();
           setProyectos(proyectos);
         }
       } else {
-        alert('No se pudo actualizar el estado en la base de datos.');
+        const errorData = await res.json();
+        setError(errorData.mensaje || errorData.error || 'No se pudo actualizar el estado en la base de datos.');
       }
     } catch (err) {
-      alert('Error de conexión con el servidor.');
+      setError('Error de conexión con el servidor.');
     } finally {
       setLoadingGuardar(prev => ({ ...prev, [proy._id]: false }));
     }
@@ -266,24 +269,25 @@ function VisualizaPage() {
     return (
       <div className="visualiza-proyectos-grid">
         {proyectosMostrar.map(proy => {
-          const estadoActual = estadosProyectos[proy._id]?.estado || proy.estado || 'Activo';
+          const estadoActual = (proy.estado || '').toLowerCase();
           const idxActual = ESTADOS.indexOf(estadoActual);
-          return (
-            <div key={proy._id} className="visualiza-proyecto-card">
-              <div className="visualiza-proyecto-header">
-                <span className="visualiza-proyecto-titulo" onClick={() => handleProyectoClick(proy)}>
-                  {proy.titulo || <span style={{ color: 'var(--color-muted)' }}>[Sin título]</span>}
-                </span>
-                <span className={`visualiza-estado-label visualiza-estado-${estadoActual.toLowerCase()}`}>
-                  {estadoActual}
-                </span>
-              </div>
-              
-              {/* Solo mostrar controles de estado para coordinador */}
-              {rol === 'coordinador' && (
-                <div className="visualiza-estado-form-row visualiza-estado-form-row-inline">
+          if (rol === 'coordinador') {
+            return (
+              <div key={proy._id} className="proyecto-item">
+                <div
+                  className="proyecto-header"
+                  onClick={() => navigate(`/detailproject/${proy._id}`)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <h3>{proy.titulo}</h3>
+                  <p><strong>Área:</strong> {proy.area}</p>
+                  <p><strong>Institución:</strong> {proy.institucion}</p>
+                  <div className={`estado ${estadoActual}`}>{estadoActual}</div>
+                </div>
+                {/* Controles de estado para coordinador */}
+                <div className="proyecto-controls">
                   <select
-                    className="visualiza-select-estado"
+                    className="estado-select"
                     value={estadoActual}
                     onChange={e => handleEstadoChange(proy._id, e.target.value)}
                   >
@@ -294,35 +298,37 @@ function VisualizaPage() {
                     ))}
                   </select>
                   <textarea
-                    className="visualiza-textarea-observacion"
+                    className="estado-observacion"
                     placeholder="Observación del cambio de estado"
                     value={estadosProyectos[proy._id]?.observacion || ''}
                     onChange={e => handleObsChange(proy._id, e.target.value)}
                   />
                   <button
-                    className="visualiza-btn visualiza-btn-admin visualiza-btn-guardar-estado"
-                    style={{ opacity: loadingGuardar[proy._id] ? 0.6 : 1, pointerEvents: loadingGuardar[proy._id] ? 'none' : 'auto' }}
+                    className="btn-guardar-estado"
                     disabled={loadingGuardar[proy._id]}
                     onClick={() => handleGuardarEstado(proy)}
                   >
                     {loadingGuardar[proy._id] ? 'Guardando...' : 'Guardar'}
                   </button>
                 </div>
-              )}
-
-              {/* Botón de registrar avance solo para estudiantes en sus proyectos */}
-              {rol === 'integrante' && (
-                <div className="visualiza-acciones" style={{ marginTop: '1rem', textAlign: 'center' }}>
-                  <button 
-                    className="visualiza-btn"
-                    onClick={() => navigate(`/seguimiento?id=${proy._id}`)}
-                  >
-                    Registrar avance
-                  </button>
-                </div>
-              )}
-            </div>
-          );
+              </div>
+            );
+          } else {
+            // Para docente y estudiante: el recuadro completo es clickeable
+            return (
+              <div
+                key={proy._id}
+                className="proyecto-item"
+                onClick={() => navigate(`/detailproject/${proy._id}`)}
+                style={{ cursor: 'pointer' }}
+              >
+                <h3>{proy.titulo}</h3>
+                <p><strong>Área:</strong> {proy.area}</p>
+                <p><strong>Institución:</strong> {proy.institucion}</p>
+                <div className={`estado ${estadoActual}`}>{estadoActual}</div>
+              </div>
+            );
+          }
         })}
       </div>
     );
@@ -375,10 +381,11 @@ function VisualizaPage() {
           )}
         </div>
 
+        {mensaje && (
+          <div style={{ color: 'var(--color-accent)', textAlign: 'center', fontWeight: 600, margin: '1rem 0' }}>{mensaje}</div>
+        )}
         {error && (
-          <div className="visualiza-error" style={{ textAlign: 'center', color: 'var(--color-error)', margin: '1rem 0' }}>
-            {error}
-          </div>
+          <div className="visualiza-error" style={{ textAlign: 'center', color: 'var(--color-error)', margin: '1rem 0' }}>{error}</div>
         )}
 
         {rol === 'coordinador' ? (
@@ -408,6 +415,35 @@ function VisualizaPage() {
               {tab === 1 && renderProyectos(otrosProyectos)}
             </div>
           </>
+        )}
+
+        {proyectoSeleccionado && (
+          <div className="visualiza-proyecto-detalle">
+            <h2>{proyectoSeleccionado.titulo}</h2>
+            <p><strong>Área:</strong> {proyectoSeleccionado.area}</p>
+            <p><strong>Objetivos:</strong> {proyectoSeleccionado.objetivos}</p>
+            <p><strong>Presupuesto:</strong> {proyectoSeleccionado.presupuesto}</p>
+            <p><strong>Institución:</strong> {proyectoSeleccionado.institucion}</p>
+            <p><strong>Estado actual:</strong> <span className={`estado ${proyectoSeleccionado.estado}`}>{proyectoSeleccionado.estado}</span></p>
+            
+            {/* Historial de estados */}
+            <div className="historial-estados">
+              <h3>Historial de Estados</h3>
+              <div className="historial-lista">
+                {proyectoSeleccionado.historialestado && proyectoSeleccionado.historialestado.map((historial, index) => (
+                  <div key={index} className="historial-item">
+                    <div className="historial-fecha">{new Date(historial.fecha).toLocaleDateString()}</div>
+                    <div className={`historial-estado ${historial.estado}`}>{historial.estado}</div>
+                    {historial.observacion && (
+                      <div className="historial-observacion">{historial.observacion}</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {/* Resto del detalle del proyecto */}
+          </div>
         )}
       </div>
       

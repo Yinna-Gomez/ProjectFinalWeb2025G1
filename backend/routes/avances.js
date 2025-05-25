@@ -80,9 +80,12 @@ router.post('/:proyectoId/avances', verificarToken, verificarMiembroProyecto, up
 
     const archivos = [];
 
+    console.log('Archivos recibidos:', req.files);
+
     // Subir archivos a Cloudinary si existen
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
+        console.log('Subiendo archivo:', file.path);
         try {
           const result = await cloudinary.uploader.upload(file.path, {
             resource_type: "auto",
@@ -98,6 +101,7 @@ router.post('/:proyectoId/avances', verificarToken, verificarMiembroProyecto, up
 
           // Eliminar archivo temporal
           await unlinkAsync(file.path);
+          console.log('Resultado Cloudinary:', result);
         } catch (uploadError) {
           console.error('Error subiendo archivo a Cloudinary:', uploadError);
           // Continuar con el siguiente archivo
