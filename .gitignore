@@ -2,7 +2,11 @@
 uploads/*
 !uploads/.gitkeep
 
+# Ignorar archivos de entorno en cualquier carpeta
+*.env
+.env
+**/.env
+
 # Otros archivos y carpetas comunes a ignorar
 node_modules/
-.env
-.DS_Store 
+.DS_Store
