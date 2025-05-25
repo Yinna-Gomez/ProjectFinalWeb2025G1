@@ -1,0 +1,8 @@
+# Ignorar archivos temporales en uploads
+uploads/*
+!uploads/.gitkeep
+
+# Otros archivos y carpetas comunes a ignorar
+node_modules/
+.env
+.DS_Store 

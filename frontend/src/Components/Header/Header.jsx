@@ -36,9 +36,13 @@ const Header = () => {
 
   // Botón flotante para volver al panel
   const handleGoToPanel = () => {
-    if (rol === 'docente') navigate('/visualiza');
-    else if (rol === 'coordinador') navigate('/seguimiento');
-    else navigate('/visualiza');
+    if (rol === 'docente' || rol === 'coordinador') {
+      navigate('/visualiza');
+    } else if (rol === 'integrante') {
+      const correo = localStorage.getItem('correo')?.toLowerCase();
+      // Los estudiantes serán redirigidos automáticamente desde VisualizaPage
+      navigate('/visualiza');
+    }
   };
 
   // Menú para móvil
@@ -68,7 +72,10 @@ const Header = () => {
         {rol && (
           <>
             <ListItem disablePadding>
-              <ListItemButton component={Link} to={rol === 'docente' ? '/visualiza' : '/seguimiento'} onClick={() => setDrawerOpen(false)}>
+              <ListItemButton onClick={() => {
+                handleGoToPanel();
+                setDrawerOpen(false);
+              }}>
                 <ListItemIcon><DashboardIcon color="primary" /></ListItemIcon>
                 <ListItemText primary="Mi Panel" />
               </ListItemButton>
@@ -128,9 +135,13 @@ const Header = () => {
             ))}
             {rol && (
               <>
-                <Link to={rol === 'docente' ? '/visualiza' : '/seguimiento'} className="header-nav-link">
+                <Button
+                  className="header-nav-link"
+                  onClick={handleGoToPanel}
+                  startIcon={<DashboardIcon />}
+                >
                   Mi Panel
-                </Link>
+                </Button>
               </>
             )}
           </nav>

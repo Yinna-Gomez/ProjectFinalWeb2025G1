@@ -150,7 +150,7 @@ const CreateProject = () => {
       tipoidentificacion: integranteForm.idType,
       identificacion: integranteForm.idNumber,
       gradoEscolar: integranteForm.grade,
-      correo: integranteForm.correo,
+      correo: integranteForm.correo.toLowerCase(),
       observaciones: '',
       estado: 'activo',
     }]);

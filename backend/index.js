@@ -18,6 +18,7 @@ import https from 'https';
 import fs from 'fs';
 import User from './Models/user.js';
 import Proyecto from './Models/proyecto.js';
+import avancesRoutes from './routes/avances.js';
 
 // Configuración de variables de entorno
 dotenv.config();
@@ -27,8 +28,8 @@ const app = express();
 // Configuración de CORS para desarrollo
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
-    : ['http://localhost:3000', 'http://localhost:5173'], // Permitir ambos puertos en desarrollo
+    ? [process.env.FRONTEND_URL]
+    : ['http://localhost:3000', 'http://localhost:5173'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -53,14 +54,16 @@ const refreshTokens = new Set();
  */
 const verificarToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'No token provided' });
-  
+  if (!token) {
+    return res.status(401).json({ mensaje: 'Token no proporcionado' });
+  }
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.usuario = decoded;
     next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
+  } catch (error) {
+    return res.status(401).json({ mensaje: 'Token inválido' });
   }
 };
 
@@ -137,10 +140,11 @@ app.post('/api/login', async (req, res) => {
       rol: user.rol,
       nombre: user.nombre,
       apellido: user.apellido,
-      correo: user.correo,
+      correo: user.correo.toLowerCase(),
       id: user._id
     });
   } catch (err) {
+    console.error('Error en login:', err);
     res.status(500).json({ message: 'Error en el servidor' });
   }
 });
@@ -188,50 +192,73 @@ app.get('/api/usuarios', verificarToken, async (req, res) => {
 
 app.get('/api/proyectos', verificarToken, async (req, res) => {
   try {
-    const proyectos = await Proyecto.find({});
+    const proyectos = await Proyecto.find({})
+      .select({
+        titulo: 1,
+        area: 1,
+        objetivos: 1,
+        cronograma: 1,
+        presupuesto: 1,
+        institucion: 1,
+        integrantes: 1,
+        historialestado: 1,
+        avances: 1,
+        estado: 1,
+        observacion: 1,
+        creadoPor: 1
+      })
+      .lean();
+    
     res.json(proyectos);
   } catch (err) {
-    res.status(500).json({ message: 'Error al obtener proyectos' });
+    console.error('Error al obtener proyectos:', err);
+    res.status(500).json({ mensaje: 'Error al obtener proyectos' });
   }
 });
 
-// Normaliza el estado para comparación (mayúsculas y tildes)
-function normalizaEstado(estado) {
-  if (!estado) return '';
-  const map = {
-    'activo': 'Activo',
-    'formulacion': 'Formulación',
-    'formulación': 'Formulación',
-    'evaluacion': 'Evaluación',
-    'evaluación': 'Evaluación',
-    'finalizado': 'Finalizado',
-  };
-  const key = estado.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
-  return map[key] || estado;
-}
+// Obtener un proyecto específico
+app.get('/api/proyectos/:id', verificarToken, async (req, res) => {
+  try {
+    const proyecto = await Proyecto.findById(req.params.id);
+    if (!proyecto) {
+      return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+    }
+    res.json(proyecto);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener el proyecto' });
+  }
+});
 
-// Actualizar el estado de un proyecto (PUT /api/proyectos/:id/estado)
-app.put('/api/proyectos/:id/estado', async (req, res) => {
+// Actualizar el estado de un proyecto
+app.put('/api/proyectos/:id/estado', verificarToken, async (req, res) => {
   const { id } = req.params;
   let { estado, observacion } = req.body;
   try {
     const proyecto = await Proyecto.findById(id);
-    if (!proyecto) return res.status(404).json({ message: 'Proyecto no encontrado' });
+    if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+    
     const ESTADOS = ['formulacion', 'evaluacion', 'activo', 'inactivo', 'finalizado'];
-    // Normaliza ambos estados
     const estadoActual = (proyecto.estado || '').toLowerCase();
     const estadoNuevo = (estado || '').toLowerCase();
     const idxActual = ESTADOS.indexOf(estadoActual);
     const idxNuevo = ESTADOS.indexOf(estadoNuevo);
+    
     if (idxNuevo === -1 || idxNuevo > idxActual + 1 || idxNuevo < idxActual) {
-      return res.status(400).json({ message: 'Transición de estado no permitida' });
+      return res.status(400).json({ mensaje: 'Transición de estado no permitida' });
     }
+
     proyecto.estado = estadoNuevo;
-    if (observacion !== undefined) proyecto.observacion = observacion;
+    proyecto.observacion = observacion;
+    proyecto.historialestado.push({
+      estado: estadoNuevo,
+      fecha: new Date().toISOString(),
+      observacion
+    });
+
     await proyecto.save();
-    res.json({ message: 'Estado actualizado', proyecto });
+    res.json({ mensaje: 'Estado actualizado', proyecto });
   } catch (err) {
-    res.status(500).json({ message: 'Error al actualizar estado' });
+    res.status(500).json({ mensaje: 'Error al actualizar estado' });
   }
 });
 
@@ -302,14 +329,26 @@ app.post('/api/proyectos', verificarToken, async (req, res) => {
   try {
     const proyectoData = {
       ...req.body,
-      creadoPor: req.usuario.usuario // Usar el usuario del token
+      creadoPor: req.usuario.usuario
     };
     const nuevoProyecto = new Proyecto(proyectoData);
     await nuevoProyecto.save();
-    res.status(201).json({ message: 'Proyecto creado', proyecto: nuevoProyecto });
+    res.status(201).json({ mensaje: 'Proyecto creado', proyecto: nuevoProyecto });
   } catch (err) {
-    res.status(500).json({ message: 'Error al crear proyecto', error: err.message });
+    res.status(500).json({ mensaje: 'Error al crear proyecto', error: err.message });
   }
+});
+
+// Rutas de avances
+app.use('/api/proyectos', verificarToken, avancesRoutes);
+
+// Configuración de manejo de errores global
+app.use((err, req, res, next) => {
+  console.error('Error en el servidor:', err);
+  res.status(500).json({ 
+    mensaje: 'Error interno del servidor', 
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Error interno'
+  });
 });
 
 // Configuración de HTTPS para producción

@@ -1,11 +1,39 @@
 .seguimiento-container {
-  /* min-height: 100vh; */
+  min-height: 100vh;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   background: var(--color-bg);
-  margin-top: 40px;
-  padding: 32px 8px;
+  padding: 40px 20px;
+}
+
+.seguimiento-content {
+  max-width: 800px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.proyecto-info {
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px var(--color-border);
+  padding: 24px;
+}
+
+.proyecto-info h2 {
+  color: var(--color-primary);
+  margin-bottom: 16px;
+}
+
+.proyecto-info p {
+  margin: 8px 0;
+  color: var(--color-text);
+}
+
+.proyecto-info strong {
+  color: var(--color-secondary);
 }
 
 .seguimiento-form {
@@ -13,8 +41,6 @@
   border-radius: 12px;
   box-shadow: 0 2px 16px var(--color-border);
   padding: 32px 28px 24px 28px;
-  max-width: 420px;
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -42,7 +68,6 @@
   margin-bottom: 2px;
 }
 
-.seguimiento-field input[type="date"],
 .seguimiento-field textarea,
 .seguimiento-field input[type="file"] {
   font-family: inherit;
@@ -55,13 +80,7 @@
   transition: border 0.2s;
 }
 
-.seguimiento-field input[type="date"]:disabled {
-  background: var(--color-border);
-  color: var(--color-muted);
-}
-
-.seguimiento-field textarea:focus,
-.seguimiento-field input[type="date"]:focus {
+.seguimiento-field textarea:focus {
   border-color: var(--color-accent);
   outline: none;
 }
@@ -70,6 +89,12 @@
   padding: 6px 0;
   background: none;
   border: none;
+}
+
+.seguimiento-field small {
+  color: var(--color-muted);
+  font-size: 0.9rem;
+  margin-top: 4px;
 }
 
 .seguimiento-btn {
@@ -86,8 +111,13 @@
   letter-spacing: 0.5px;
 }
 
-.seguimiento-btn:hover {
+.seguimiento-btn:hover:not(:disabled) {
   background: var(--color-accent);
+}
+
+.seguimiento-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .seguimiento-error {
@@ -105,9 +135,90 @@
   font-weight: bold;
 }
 
+.avances-previos {
+  background: var(--color-surface);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px var(--color-border);
+  padding: 24px;
+}
+
+.avances-previos h3 {
+  color: var(--color-primary);
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+.avances-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.avance-item {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 16px;
+  background: var(--color-bg);
+}
+
+.avance-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.avance-descripcion {
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.avance-archivos h4 {
+  color: var(--color-secondary);
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+
+.archivos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.archivo-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.archivo-link:hover {
+  background: var(--color-border);
+  color: var(--color-accent);
+}
+
+.no-avances {
+  text-align: center;
+  color: var(--color-muted);
+  font-style: italic;
+}
+
 @media (max-width: 600px) {
+  .seguimiento-container {
+    padding: 20px 12px;
+  }
+
   .seguimiento-form {
-    padding: 18px 6vw 16px 6vw;
-    max-width: 98vw;
+    padding: 20px 16px;
+  }
+
+  .proyecto-info,
+  .avances-previos {
+    padding: 16px;
   }
 }

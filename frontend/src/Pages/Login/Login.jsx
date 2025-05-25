@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../Components/AuthContext';
 import './Login.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const Login = () => {
   const [usuario, setUsuario] = useState('');
   const [contrasenia, setContrasenia] = useState('');
@@ -15,7 +17,7 @@ const Login = () => {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:3001/api/login', {
+      const res = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,6 +28,7 @@ const Login = () => {
       const data = await res.json();
 
       if (res.ok) {
+        console.log('Datos de login recibidos:', data); // Para debug
         // Usar la función login del contexto
         login(data);
         navigate('/visualiza');
@@ -33,6 +36,7 @@ const Login = () => {
         setError(data.message || 'Error al iniciar sesión');
       }
     } catch (err) {
+      console.error('Error en login:', err);
       setError('Error de conexión con el servidor');
     }
   };

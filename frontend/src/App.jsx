@@ -13,7 +13,7 @@ import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import "./App.css";
 
 // Componente para proteger rutas
-const ProtectedRoute = ({ children, allowedRoles }) => {
+const ProtectedRoute = ({ children, allowedRoles, redirectTo = "/login" }) => {
   const token = localStorage.getItem('token');
   const rol = localStorage.getItem('rol');
 
@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(rol)) {
-    return <Navigate to="/visualiza" />;
+    return <Navigate to={redirectTo} />;
   }
 
   return children;
@@ -37,8 +37,19 @@ function App() {
           <main>
             <Routes>
               <Route path="/" element={<HomgePage />} />
-              <Route path="/seguimiento" element={<SeguimientoPage />} />
               <Route path="/login" element={<Login />} />
+              
+              {/* Ruta para estudiantes */}
+              <Route 
+                path="/seguimiento" 
+                element={
+                  <ProtectedRoute allowedRoles={['integrante', 'docente']}>
+                    <SeguimientoPage />
+                  </ProtectedRoute>
+                } 
+              />
+
+              {/* Ruta para visualización de proyectos */}
               <Route 
                 path="/visualiza" 
                 element={
@@ -47,14 +58,18 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+
+              {/* Ruta para crear proyectos (solo docentes) */}
               <Route 
                 path="/createproject" 
                 element={
-                  <ProtectedRoute allowedRoles={['docente']}>
+                  <ProtectedRoute allowedRoles={['docente']} redirectTo="/visualiza">
                     <CreateProject />
                   </ProtectedRoute>
                 } 
               />
+
+              {/* Ruta para detalles del proyecto */}
               <Route 
                 path="/detailproject" 
                 element={
@@ -63,7 +78,16 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
-              <Route path="/addmember" element={<AddMember />} />
+
+              {/* Ruta para agregar miembros */}
+              <Route 
+                path="/addmember" 
+                element={
+                  <ProtectedRoute allowedRoles={['docente']} redirectTo="/visualiza">
+                    <AddMember />
+                  </ProtectedRoute>
+                } 
+              />
             </Routes>
           </main>
           <Footer />

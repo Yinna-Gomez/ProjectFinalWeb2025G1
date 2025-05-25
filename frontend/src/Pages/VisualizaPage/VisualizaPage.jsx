@@ -32,11 +32,12 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 function VisualizaPage() {
   const [tab, setTab] = useState(0);
   const [busqueda, setBusqueda] = useState('');
-  const { rol, usuario, refreshToken } = useContext(AuthContext);
+  const { rol, usuario, correo } = useContext(AuthContext);
   const [proyectos, setProyectos] = useState([]);
   const [estadosProyectos, setEstadosProyectos] = useState({});
   const navigate = useNavigate();
   const [loadingGuardar, setLoadingGuardar] = useState({});
+  const [error, setError] = useState('');
 
   /**
    * Función para renovar el token de acceso
@@ -113,15 +114,62 @@ function VisualizaPage() {
     }
   }, [rol, navigate]);
 
+  // Redirección si es estudiante y carga de proyectos
+  useEffect(() => {
+    if (rol === 'integrante' && proyectos.length > 0) {
+      console.log('Buscando proyectos para estudiante:', correo);
+      const misProyectos = proyectos.filter(p => 
+        p.integrantes && p.integrantes.some(i => 
+          i.correo?.toLowerCase() === correo?.toLowerCase()
+        )
+      );
+      
+      if (misProyectos.length === 0) {
+        console.log('No se encontraron proyectos para el estudiante');
+        setError('No tienes ningún proyecto asignado. Por favor, contacta a tu docente.');
+      } else {
+        setError('');
+      }
+    }
+  }, [proyectos, rol, correo]);
+
   // Fetch proyectos desde backend
   useEffect(() => {
     const cargarProyectos = async () => {
       try {
-        const res = await fetchConToken(`${API_URL}/api/proyectos`);
-        if (!res) return;
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
+
+        const res = await fetch(`${API_URL}/api/proyectos`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json'
+          }
+        });
+        
+        if (!res.ok) {
+          throw new Error('Error al cargar los proyectos');
+        }
         
         const data = await res.json();
         setProyectos(data);
+
+        // Verificar proyectos para estudiantes
+        if (rol === 'integrante') {
+          const misProyectos = data.filter(p => 
+            p.integrantes && p.integrantes.some(i => i.correo?.toLowerCase() === correo?.toLowerCase())
+          );
+          
+          if (misProyectos.length === 0) {
+            setError('No tienes ningún proyecto asignado. Por favor, contacta a tu docente.');
+          } else {
+            setError('');
+          }
+        }
+
         const estados = {};
         data.forEach(p => {
           estados[p._id] = { estado: p.estado || '', observacion: '' };
@@ -129,11 +177,12 @@ function VisualizaPage() {
         setEstadosProyectos(estados);
       } catch (err) {
         console.error('Error cargando proyectos:', err);
+        setError('Error al cargar los proyectos. Por favor, intenta de nuevo más tarde.');
       }
     };
 
     cargarProyectos();
-  }, [navigate]);
+  }, [rol, navigate, correo]);
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
@@ -213,10 +262,10 @@ function VisualizaPage() {
         </div>
       );
     }
+
     return (
       <div className="visualiza-proyectos-grid">
         {proyectosMostrar.map(proy => {
-          // Estado actual
           const estadoActual = estadosProyectos[proy._id]?.estado || proy.estado || 'Activo';
           const idxActual = ESTADOS.indexOf(estadoActual);
           return (
@@ -225,9 +274,12 @@ function VisualizaPage() {
                 <span className="visualiza-proyecto-titulo" onClick={() => handleProyectoClick(proy)}>
                   {proy.titulo || <span style={{ color: 'var(--color-muted)' }}>[Sin título]</span>}
                 </span>
-                <span className={`visualiza-estado-label visualiza-estado-${estadoActual.toLowerCase()}`}>{estadoActual}</span>
+                <span className={`visualiza-estado-label visualiza-estado-${estadoActual.toLowerCase()}`}>
+                  {estadoActual}
+                </span>
               </div>
-              {/* Solo el coordinador puede cambiar el estado y observación */}
+              
+              {/* Solo mostrar controles de estado para coordinador */}
               {rol === 'coordinador' && (
                 <div className="visualiza-estado-form-row visualiza-estado-form-row-inline">
                   <select
@@ -257,6 +309,18 @@ function VisualizaPage() {
                   </button>
                 </div>
               )}
+
+              {/* Botón de registrar avance solo para estudiantes en sus proyectos */}
+              {rol === 'integrante' && (
+                <div className="visualiza-acciones" style={{ marginTop: '1rem', textAlign: 'center' }}>
+                  <button 
+                    className="visualiza-btn"
+                    onClick={() => navigate(`/seguimiento?id=${proy._id}`)}
+                  >
+                    Registrar avance
+                  </button>
+                </div>
+              )}
             </div>
           );
         })}
@@ -264,13 +328,21 @@ function VisualizaPage() {
     );
   };
 
-  // Filtrado por búsqueda (nombre de proyecto o institución)
-  const proyectosFiltrados = proyectos.filter(p =>
-    (p.titulo && p.titulo.toLowerCase().includes(busqueda.toLowerCase())) ||
-    (p.institucion && p.institucion.toLowerCase().includes(busqueda.toLowerCase()))
-  );
+  // Filtrado por búsqueda y rol
+  const proyectosFiltrados = proyectos.filter(p => {
+    const matchBusqueda = (p.titulo && p.titulo.toLowerCase().includes(busqueda.toLowerCase())) ||
+                         (p.institucion && p.institucion.toLowerCase().includes(busqueda.toLowerCase()));
+    
+    if (rol === 'integrante') {
+      return matchBusqueda && p.integrantes && p.integrantes.some(i => 
+        i.correo?.toLowerCase() === correo?.toLowerCase()
+      );
+    }
+    
+    return matchBusqueda;
+  });
 
-  // Filtrado para docente: mis proyectos y otros proyectos
+  // Para docente: separar mis proyectos y otros proyectos
   let misProyectos = [];
   let otrosProyectos = [];
   if (rol === 'docente') {
@@ -278,7 +350,6 @@ function VisualizaPage() {
     otrosProyectos = proyectosFiltrados.filter(p => p.creadoPor !== usuario);
   }
 
-  // Para el coordinador, mostrar una sola lista general
   return (
     <div className="visualiza-panel-container visualiza-panel-wide visualiza-panel-flex">
       <div className="visualiza-panel visualiza-panel-main">
@@ -303,13 +374,25 @@ function VisualizaPage() {
             </button>
           )}
         </div>
+
+        {error && (
+          <div className="visualiza-error" style={{ textAlign: 'center', color: 'var(--color-error)', margin: '1rem 0' }}>
+            {error}
+          </div>
+        )}
+
         {rol === 'coordinador' ? (
-          // Solo una lista general para coordinador
+          // Lista general para coordinador
+          <div className="visualiza-tab-content">
+            {renderProyectos(proyectosFiltrados)}
+          </div>
+        ) : rol === 'integrante' ? (
+          // Solo mis proyectos para estudiantes
           <div className="visualiza-tab-content">
             {renderProyectos(proyectosFiltrados)}
           </div>
         ) : (
-          // Tabs para otros roles
+          // Tabs para docentes
           <>
             <Tabs
               value={tab}
@@ -321,20 +404,13 @@ function VisualizaPage() {
               <Tab label="Otros proyectos" />
             </Tabs>
             <div className="visualiza-tab-content">
-              {tab === 0 && (
-                <>
-                  {renderProyectos(misProyectos)}
-                  <div className="visualiza-acciones">
-                    <button className="visualiza-btn">Registrar avance</button>
-                    <button className="visualiza-btn">Generar reportes</button>
-                  </div>
-                </>
-              )}
+              {tab === 0 && renderProyectos(misProyectos)}
               {tab === 1 && renderProyectos(otrosProyectos)}
             </div>
           </>
         )}
       </div>
+      
       {/* Panel lateral solo para coordinador */}
       {rol === 'coordinador' && (
         <div style={{ marginTop: '2rem', width: '100%' }}>

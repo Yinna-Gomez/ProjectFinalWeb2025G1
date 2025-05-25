@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -11,127 +12,240 @@ import {
   List,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
+  Chip
 } from '@mui/material';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
+import DescriptionIcon from '@mui/icons-material/Description';
 import './DetailProject.css';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const DetailProject = () => {
-  const projectDetails = {
-    title: 'Título del proyecto 1',
-    status: 'Formulación',
-    area: 'Área del proyecto',
-    objectives: 'Objetivos del proyecto',
-    cronogram: 'Cronograma del proyecto',
-    budget: 'Presupuesto del proyecto',
-    educationalInstitution: 'Institución Educativa del proyecto',
-    members: 'Integrantes del proyecto'
+  const [proyecto, setProyecto] = useState(null);
+  const [error, setError] = useState('');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const proyectoId = new URLSearchParams(location.search).get('id');
+
+  useEffect(() => {
+    const cargarProyecto = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_URL}/api/proyectos/${proyectoId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('No se pudo cargar el proyecto');
+        }
+        
+        const data = await response.json();
+        setProyecto(data);
+      } catch (error) {
+        setError('Error al cargar el proyecto');
+        console.error(error);
+      }
+    };
+
+    if (proyectoId) {
+      cargarProyecto();
+    } else {
+      navigate('/visualiza');
+    }
+  }, [proyectoId, navigate]);
+
+  const getIconByFileType = (tipo) => {
+    const extension = tipo.toLowerCase();
+    if (['.jpg', '.jpeg', '.png', '.gif'].includes(extension)) {
+      return <ImageIcon />;
+    } else if (extension === '.pdf') {
+      return <PictureAsPdfIcon />;
+    } else {
+      return <DescriptionIcon />;
+    }
   };
 
-  const files = [
-    { name: "128-ABC-00-DR-A-103-GA PLAN LEVEL 00", size: "1:100" },
-    { name: "128-ABC-01-DR-A-104-GA PLAN LEVEL 01", size: "1:100" },
-    { name: "128-ABC-B1-DR-A-102-GA PLAN LEVEL -0'", size: "1:100" },
-    { name: "128-DEF-00-DR-S-111-LEVEL 00 DECK REF", size: "1:100" },
-    { name: "128-DEF-01-DR-S-201-LEVEL 01 DECK REF", size: "1:100" },
-    { name: "128-DEF-B1-DR-S-101-LEVEL B1 - PILES &", size: "1:100" },
-  ];
-
-  const images = [
-    "20180329_081951.jpg",
-    "20180329_121206.jpg",
-    "25254688767_590039f06c_o.jpg",
-    "3805645431_a3f409f4d7_o.jpg",
-    "38503831555_9ae89f5c10_o.jpg",
-    "DSC08899.JPG",
-    "DSC08900.JPG",
-    "DSC08901.JPG",
-  ];
+  if (!proyecto) {
+    return (
+      <Container sx={{ minHeight: '100vh', py: 6 }}>
+        <Typography variant="h5" align="center">Cargando proyecto...</Typography>
+      </Container>
+    );
+  }
 
   return (
     <Container sx={{ minHeight: '100vh', py: 6 }}>
+      <Button 
+        variant="outlined" 
+        onClick={() => navigate('/visualiza')}
+        sx={{ mb: 3 }}
+      >
+        Volver
+      </Button>
+
       <Paper elevation={3} sx={{ p: 4, backgroundColor: 'var(--color-surface)', color: 'var(--color-text)' }}>
         <Typography variant="h4" align="center" gutterBottom sx={{ color: 'var(--color-primary)' }}>
-          Detalle del proyecto
+          {proyecto.titulo}
         </Typography>
 
-        <Grid container spacing={4}>
-          {/* Información del Proyecto */}
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom sx={{ color: 'var(--color-primary)' }}>
-              Información
-            </Typography>
-            <Divider sx={{ mb: 2, borderColor: 'var(--color-border)' }} />
+        <Grid container spacing={3} sx={{ mt: 2 }}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>Información General</Typography>
             <Stack spacing={2}>
-              {Object.entries(projectDetails).map(([key, value]) => (
-                <Typography key={key} variant="body2" sx={{ fontWeight: 500 }}>
-                  {value}
-                </Typography>
-              ))}
+              <Box>
+                <Typography variant="subtitle1" color="var(--color-secondary)">Estado</Typography>
+                <Chip 
+                  label={proyecto.estado.toUpperCase()} 
+                  color="primary" 
+                  size="small" 
+                  sx={{ mt: 0.5 }}
+                />
+              </Box>
+              <Box>
+                <Typography variant="subtitle1" color="var(--color-secondary)">Área</Typography>
+                <Typography>{proyecto.area}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle1" color="var(--color-secondary)">Institución</Typography>
+                <Typography>{proyecto.institucion}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle1" color="var(--color-secondary)">Objetivos</Typography>
+                <Typography>{proyecto.objetivos}</Typography>
+              </Box>
+              <Box>
+                <Typography variant="subtitle1" color="var(--color-secondary)">Presupuesto</Typography>
+                <Typography>{proyecto.presupuesto}</Typography>
+              </Box>
             </Stack>
           </Grid>
 
-          {/* Archivos */}
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom sx={{ color: 'var(--color-primary)' }}>
-              Archivos
-            </Typography>
-            <Divider sx={{ mb: 2, borderColor: 'var(--color-border)' }} />
-            <Paper variant="outlined" sx={{ maxHeight: 240, overflowY: 'auto', p: 2 }}>
-              <List dense>
-                {files.map((file, index) => (
-                  <ListItem key={index} button sx={{ borderRadius: 1, '&:hover': { backgroundColor: 'var(--color-hover)' } }}>
-                    <ListItemIcon>
-                      <PictureAsPdfIcon color="error" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={file.name}
-                      secondary={`PDF, Escala ${file.size}`}
-                    />
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
-          </Grid>
-
-          {/* Imágenes */}
-          <Grid item xs={12} md={4}>
-            <Typography variant="h6" gutterBottom sx={{ color: 'var(--color-primary)' }}>
-              Imágenes
-            </Typography>
-            <Divider sx={{ mb: 2, borderColor: 'var(--color-border)' }} />
-            <Paper variant="outlined" sx={{ maxHeight: 240, overflowY: 'auto', p: 2 }}>
-              <List dense>
-                {images.map((image, index) => (
-                  <ListItem key={index} button sx={{ borderRadius: 1, '&:hover': { backgroundColor: 'var(--color-hover)' } }}>
-                    <ListItemIcon>
-                      <ImageIcon sx={{ color: 'var(--color-accent)' }} />
-                    </ListItemIcon>
-                    <ListItemText primary={image} />
-                  </ListItem>
-                ))}
-              </List>
-            </Paper>
+          <Grid item xs={12} md={6}>
+            <Typography variant="h6" gutterBottom>Integrantes</Typography>
+            <List>
+              {proyecto.integrantes.map((integrante, index) => (
+                <ListItem key={index}>
+                  <ListItemText
+                    primary={`${integrante.nombre} ${integrante.apellido}`}
+                    secondary={`${integrante.tipoidentificacion}: ${integrante.identificacion} - Grado: ${integrante.gradoEscolar}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
           </Grid>
         </Grid>
 
-        {/* Botón Volver */}
-        <Box textAlign="center" mt={6}>
-          <Button
-            variant="contained"
-            sx={{
-              backgroundColor: 'var(--color-accent)',
-              color: '#fff',
-              '&:hover': { backgroundColor: '#2c80c9' },
-              borderRadius: 2,
-              px: 4,
-              py: 1
+        <Divider sx={{ my: 4 }} />
+
+        <Typography variant="h5" gutterBottom sx={{ color: 'var(--color-primary)' }}>
+          Avances del Proyecto
+        </Typography>
+
+        {proyecto.avances && proyecto.avances.length > 0 ? (
+          proyecto.avances.map((avance, index) => (
+            <Paper 
+              key={index} 
+              elevation={1} 
+              sx={{ 
+                p: 3, 
+                mt: 2, 
+                backgroundColor: 'var(--color-bg)',
+                border: '1px solid var(--color-border)'
+              }}
+            >
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="subtitle2" color="var(--color-muted)">
+                  {new Date(avance.fecha).toLocaleDateString()}
+                </Typography>
+                <Typography variant="subtitle2" color="var(--color-muted)">
+                  Por: {avance.creadoPor}
+                </Typography>
+              </Box>
+
+              <Typography paragraph>{avance.descripcion}</Typography>
+
+              {avance.archivos && avance.archivos.length > 0 && (
+                <Box>
+                  <Typography variant="subtitle1" sx={{ mb: 1, color: 'var(--color-secondary)' }}>
+                    Archivos adjuntos:
+                  </Typography>
+                  <Grid container spacing={1}>
+                    {avance.archivos.map((archivo, idx) => (
+                      <Grid item xs={12} sm={6} md={4} key={idx}>
+                        <Paper
+                          sx={{
+                            p: 1,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1,
+                            '&:hover': {
+                              backgroundColor: 'var(--color-border)'
+                            }
+                          }}
+                        >
+                          <ListItemIcon sx={{ minWidth: 36 }}>
+                            {getIconByFileType(archivo.tipo)}
+                          </ListItemIcon>
+                          <a
+                            href={archivo.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                              color: 'var(--color-primary)',
+                              textDecoration: 'none',
+                              fontSize: '0.9rem',
+                              flex: 1,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap'
+                            }}
+                          >
+                            {archivo.nombre}
+                          </a>
+                        </Paper>
+                      </Grid>
+                    ))}
+                  </Grid>
+                </Box>
+              )}
+            </Paper>
+          ))
+        ) : (
+          <Typography 
+            align="center" 
+            sx={{ 
+              my: 4, 
+              color: 'var(--color-muted)',
+              fontStyle: 'italic'
             }}
           >
-            Volver
-          </Button>
-        </Box>
+            No hay avances registrados aún.
+          </Typography>
+        )}
+
+        {/* Botón para registrar avance (solo visible para integrantes) */}
+        {proyecto.integrantes && proyecto.integrantes.some(i => 
+          i.correo?.toLowerCase() === localStorage.getItem('correo')?.toLowerCase()
+        ) && (
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Button
+              variant="contained"
+              onClick={() => navigate(`/seguimiento?id=${proyectoId}`)}
+              sx={{
+                backgroundColor: 'var(--color-primary)',
+                '&:hover': {
+                  backgroundColor: 'var(--color-accent)'
+                }
+              }}
+            >
+              Registrar Avance
+            </Button>
+          </Box>
+        )}
       </Paper>
     </Container>
   );

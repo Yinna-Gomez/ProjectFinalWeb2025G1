@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [rol, setRol] = useState(localStorage.getItem('rol') || '');
   const [usuario, setUsuario] = useState(localStorage.getItem('usuario') || '');
+  const [correo, setCorreo] = useState(localStorage.getItem('correo') || '');
   const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
 
@@ -14,11 +15,13 @@ export const AuthProvider = ({ children }) => {
   const login = (userData) => {
     setRol(userData.rol);
     setUsuario(userData.usuario);
+    setCorreo(userData.correo);
     setToken(userData.accessToken);
     setRefreshToken(userData.refreshToken);
 
     localStorage.setItem('rol', userData.rol);
     localStorage.setItem('usuario', userData.usuario);
+    localStorage.setItem('correo', userData.correo);
     localStorage.setItem('token', userData.accessToken);
     localStorage.setItem('refreshToken', userData.refreshToken);
   };
@@ -40,12 +43,14 @@ export const AuthProvider = ({ children }) => {
       // Limpiar estado local
       setRol('');
       setUsuario('');
+      setCorreo('');
       setToken('');
       setRefreshToken('');
 
       // Limpiar localStorage
       localStorage.removeItem('rol');
       localStorage.removeItem('usuario');
+      localStorage.removeItem('correo');
       localStorage.removeItem('token');
       localStorage.removeItem('refreshToken');
     }
@@ -90,7 +95,7 @@ export const AuthProvider = ({ children }) => {
   }, [token, refreshToken]);
 
   return (
-    <AuthContext.Provider value={{ rol, usuario, token, refreshToken, login, logout }}>
+    <AuthContext.Provider value={{ rol, usuario, correo, token, refreshToken, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
