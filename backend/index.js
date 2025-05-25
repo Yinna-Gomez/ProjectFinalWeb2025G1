@@ -371,19 +371,6 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Rechazo de promesa no manejado:', reason);
 });
 
-// Configuración de HTTPS para producción
-if (process.env.NODE_ENV === 'production') {
-  const httpsOptions = {
-    key: fs.readFileSync(process.env.SSL_KEY_PATH),
-    cert: fs.readFileSync(process.env.SSL_CERT_PATH)
-  };
-  
-  https.createServer(httpsOptions, app)
-    .listen(process.env.PORT || 3001, () => {
-      console.log(`Servidor HTTPS corriendo en puerto ${process.env.PORT || 3001}`);
-    });
-} else {
-  app.listen(process.env.PORT || 3001, () => {
-    console.log(`Servidor HTTP corriendo en puerto ${process.env.PORT || 3001}`);
-  });
-}
+app.listen(process.env.PORT || 3001, () => {
+  console.log(`Servidor HTTP corriendo en puerto ${process.env.PORT || 3001}`);
+});
