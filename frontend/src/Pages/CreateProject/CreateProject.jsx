@@ -197,13 +197,16 @@ const CreateProject = () => {
       area: project.area,
       institucion: project.institucion,
       objetivos: project.objetivos,
-      cronograma, // debe ser array de actividades
-      observacion: project.observaciones, // <-- Cambia a singular y usa el valor del input
+      cronograma,
+      observacion: project.observaciones,
       integrantes,
       historialestado: [{ estado: 'formulacion', fecha: new Date().toISOString(), observacion: '' }],
       estado: 'formulacion',
       creadoPor: usuarioActual || '',
     };
+
+    console.log('Enviando proyectoData:', proyectoData); // <-- Agregado para depuración
+
     // Envía el proyecto a la colección proyectos
     const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/api/proyectos`, {
