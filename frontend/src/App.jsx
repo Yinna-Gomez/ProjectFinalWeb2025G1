@@ -4,7 +4,6 @@ import { AuthProvider } from './Components/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Login from './Pages/Login/Login';
 import Unauthorized from './Pages/Unauthorized/Unauthorized';
-import Dashboard from './Pages/Dashboard/Dashboard';
 import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import DetailProject from './Pages/DetailProject/DetailProject';
 import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
@@ -21,15 +20,6 @@ const App = () => {
           <Route path="/unauthorized" element={<Unauthorized />} />
 
           {/* Rutas protegidas */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-
           <Route
             path="/visualiza"
             element={
@@ -67,8 +57,8 @@ const App = () => {
           />
 
           {/* Redirección por defecto */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="/visualiza" replace />} />
+          <Route path="*" element={<Navigate to="/visualiza" replace />} />
         </Routes>
       </AuthProvider>
     </Router>
