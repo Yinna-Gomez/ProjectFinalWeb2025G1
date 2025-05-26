@@ -217,9 +217,15 @@ const CreateProject = () => {
     };
 
     console.log('Enviando proyectoData:', proyectoData);
+    const token = localStorage.getItem('token');
+    console.log('Token JWT usado para crear proyecto:', token); // <-- Agregado para depuración
+
+    if (!token) {
+      setError('No tienes sesión activa. Por favor, inicia sesión nuevamente.');
+      return;
+    }
 
     // Envía el proyecto a la colección proyectos
-    const token = localStorage.getItem('token');
     const res = await fetch(`${API_URL}/api/proyectos`, {
       method: 'POST',
       headers: {
