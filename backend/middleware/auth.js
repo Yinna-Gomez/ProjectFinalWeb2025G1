@@ -36,4 +36,4 @@ export const generarRefreshToken = (user) => {
     { expiresIn: '7d' }
   );
   return refreshToken;
-}; 
+};
