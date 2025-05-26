@@ -14,8 +14,6 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import https from 'https';
-import fs from 'fs';
 import User from './Models/user.js';
 import Proyecto from './Models/proyecto.js';
 import avancesRoutes from './routes/avances.js';
@@ -369,6 +367,10 @@ process.on('uncaughtException', (err) => {
 });
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Rechazo de promesa no manejado:', reason);
+});
+
+app.get('/', (req, res) => {
+  res.send('API corriendo correctamente');
 });
 
 app.listen(process.env.PORT || 3001, () => {
