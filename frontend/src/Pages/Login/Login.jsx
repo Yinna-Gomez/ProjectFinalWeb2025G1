@@ -6,67 +6,81 @@ import './Login.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const Login = () => {
-  const [usuario, setUsuario] = useState('');
-  const [contrasenia, setContrasenia] = useState('');
+  const [formData, setFormData] = useState({
+    usuario: '',
+    password: ''
+  });
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
-      const res = await fetch(`${API_URL}/api/login`, {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ usuario, contrasenia }),
+        body: JSON.stringify(formData)
       });
 
-      const data = await res.json();
+      const data = await response.json();
 
-      if (res.ok) {
-        console.log('Datos de login recibidos:', data); // Para debug
-        // Usar la función login del contexto
-        login(data);
-        navigate('/visualiza');
-      } else {
-        setError(data.message || 'Error al iniciar sesión');
+      if (!response.ok) {
+        throw new Error(data.message || 'Error al iniciar sesión');
       }
-    } catch (err) {
-      console.error('Error en login:', err);
-      setError('Error de conexión con el servidor');
+
+      login(data);
+      navigate('/dashboard');
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="login-container">
-      <div className="login-form">
+      <div className="login-box">
         <h2>Iniciar Sesión</h2>
-        {error && <div className="login-error">{error}</div>}
+        {error && <div className="error-message">{error}</div>}
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Usuario:</label>
+            <label htmlFor="usuario">Usuario</label>
             <input
               type="text"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
+              id="usuario"
+              name="usuario"
+              value={formData.usuario}
+              onChange={handleChange}
               required
             />
           </div>
           <div className="form-group">
-            <label>Contraseña:</label>
+            <label htmlFor="password">Contraseña</label>
             <input
               type="password"
-              value={contrasenia}
-              onChange={(e) => setContrasenia(e.target.value)}
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
               required
             />
           </div>
-          <button type="submit" className="login-btn">
-            Ingresar
+          <button type="submit" disabled={loading}>
+            {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
       </div>

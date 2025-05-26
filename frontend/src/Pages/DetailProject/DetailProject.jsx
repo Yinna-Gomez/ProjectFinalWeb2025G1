@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
@@ -25,14 +25,14 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { FaFilePdf } from 'react-icons/fa';
 import './DetailProject.css';
-import { useAuth } from '../../Components/AuthContext';
+import { AuthContext } from '../../Components/AuthContext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const DetailProject = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { rol, usuario, correo } = useAuth();
+  const { rol } = useContext(AuthContext);
   const [proyecto, setProyecto] = useState(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
@@ -59,7 +59,6 @@ const DetailProject = () => {
         setProyecto(data);
       } catch (error) {
         setError('Error al cargar el proyecto');
-        console.error(error);
       } finally {
         setLoading(false);
       }
@@ -274,6 +273,22 @@ const DetailProject = () => {
                       </ListItem>
                     ))}
                   </List>
+                </Grid>
+              )}
+
+              {/* Botón de registrar avance para estudiantes/integrantes */}
+              {rol === 'integrante' && (
+                <Grid item xs={12}>
+                  <Divider sx={{ my: 3 }} />
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate(`/seguimiento?id=${proyecto._id}`)}
+                    className="btn-registrar-avance"
+                    fullWidth
+                  >
+                    Registrar Avance
+                  </Button>
                 </Grid>
               )}
             </Grid>

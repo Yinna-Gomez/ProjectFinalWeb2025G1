@@ -80,12 +80,9 @@ router.post('/:proyectoId/avances', verificarToken, verificarMiembroProyecto, up
 
     const archivos = [];
 
-    console.log('Archivos recibidos:', req.files);
-
     // Subir archivos a Cloudinary si existen
     if (req.files && req.files.length > 0) {
       for (const file of req.files) {
-        console.log('Subiendo archivo:', file.path);
         try {
           const result = await cloudinary.uploader.upload(file.path, {
             resource_type: "auto",
@@ -101,7 +98,6 @@ router.post('/:proyectoId/avances', verificarToken, verificarMiembroProyecto, up
 
           // Eliminar archivo temporal
           await unlinkAsync(file.path);
-          console.log('Resultado Cloudinary:', result);
         } catch (uploadError) {
           console.error('Error subiendo archivo a Cloudinary:', uploadError);
           // Continuar con el siguiente archivo
@@ -129,20 +125,7 @@ router.post('/:proyectoId/avances', verificarToken, verificarMiembroProyecto, up
     res.status(201).json(proyecto.avances[proyecto.avances.length - 1]);
   } catch (error) {
     console.error('Error al crear avance:', error);
-    // Si hay error, eliminar archivos temporales si existen
-    if (req.files) {
-      for (const file of req.files) {
-        try {
-          await unlinkAsync(file.path);
-        } catch (err) {
-          console.error('Error eliminando archivo temporal:', err);
-        }
-      }
-    }
-    res.status(500).json({ 
-      mensaje: 'Error al crear avance', 
-      error: error.message || 'Error interno del servidor' 
-    });
+    res.status(500).json({ mensaje: 'Error al crear el avance', error: error.message });
   }
 });
 

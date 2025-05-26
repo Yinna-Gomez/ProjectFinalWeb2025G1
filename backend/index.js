@@ -28,7 +28,7 @@ dotenv.config();
 
 const app = express();
 
-// Configuración de CORS para desarrollo
+// Configuración de CORS para desarrollo y producción
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
     ? [process.env.FRONTEND_URL]
@@ -37,14 +37,22 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Rutas
+// Rutas públicas
 app.use('/api/auth', authRoutes);
-app.use('/api/usuarios', usuariosRoutes);
-app.use('/api/proyectos', proyectosRoutes);
-app.use('/api/proyectos', avancesRoutes);
+
+// Rutas protegidas
+app.use('/api/usuarios', verificarToken, usuariosRoutes);
+app.use('/api/proyectos', verificarToken, proyectosRoutes);
+app.use('/api/proyectos', verificarToken, avancesRoutes);
+
+// Ruta de prueba para verificar que el servidor está funcionando
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Servidor funcionando correctamente' });
+});
 
 // Constantes de configuración
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -111,7 +119,7 @@ const generarRefreshToken = (user) => {
 };
 
 // Conexión a MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ondas-col')
+mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log('Conectado a MongoDB'))
   .catch(err => console.error('Error conectando a MongoDB:', err));
 
@@ -348,13 +356,7 @@ app.post('/api/proyectos', verificarToken, async (req, res) => {
   }
 });
 
-// Log global para cada petición entrante
-app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
-  next();
-});
-
-// Configuración de manejo de errores global
+// Manejo de errores global
 app.use((err, req, res, next) => {
   console.error('Error en el servidor:', err);
   res.status(500).json({ 
@@ -363,14 +365,21 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Manejo global de errores no capturados
+// Manejo de rutas no encontradas
+app.use((req, res) => {
+  res.status(404).json({ mensaje: 'Ruta no encontrada' });
+});
+
+// Manejo de errores no capturados
 process.on('uncaughtException', (err) => {
   console.error('Excepción no capturada:', err);
 });
+
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Rechazo de promesa no manejado:', reason);
 });
 
-app.listen(process.env.PORT || 3001, () => {
-  console.log(`Servidor HTTP corriendo en puerto ${process.env.PORT || 3001}`);
+const PORT = process.env.PORT || 3001;
+app.listen(PORT, () => {
+  console.log(`Servidor HTTP corriendo en puerto ${PORT}`);
 });
