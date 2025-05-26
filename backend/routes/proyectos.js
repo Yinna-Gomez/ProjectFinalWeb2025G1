@@ -47,6 +47,7 @@ router.get('/:id', verificarToken, async (req, res) => {
 // Crear un nuevo proyecto
 router.post('/', verificarToken, async (req, res) => {
   try {
+    console.log('Datos recibidos para crear proyecto:', req.body);
     const proyectoData = {
       ...req.body,
       creadoPor: req.usuario.usuario
@@ -55,51 +56,53 @@ router.post('/', verificarToken, async (req, res) => {
     await nuevoProyecto.save();
     res.status(201).json({ mensaje: 'Proyecto creado', proyecto: nuevoProyecto });
   } catch (err) {
-    res.status(500).json({ mensaje: 'Error al crear proyecto', error: err.message });
-  }
+    console.error('Error al crear proyecto:', err); res.status(500).json({ mensaje: 'Error al crear proyecto', error: err.message, stack: err.stack });
+    res.status(500).json({ mensaje: 'Error al crear proyecto', error: err.message, stack: err.stack });
+  }});
 });
 
-// Actualizar el estado de un proyecto
+// Actualizar el estado de un proyectorificarToken, async (req, res) => {
 router.put('/:id/estado', verificarToken, async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; estado, observacion } = req.body;
   let { estado, observacion } = req.body;
-  try {
-    const ESTADOS = ['formulacion', 'evaluacion', 'activo', 'inactivo', 'finalizado'];
+  try { 'activo', 'inactivo', 'finalizado'];
+    const ESTADOS = ['formulacion', 'evaluacion', 'activo', 'inactivo', 'finalizado']; await Proyecto.findById(id);
     const proyecto = await Proyecto.findById(id);
-    if (!proyecto) {
-      return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+    if (!proyecto) { return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+      return res.status(404).json({ mensaje: 'Proyecto no encontrado' });    }
     }
-
-    const estadoActual = (proyecto.estado || '').toLowerCase();
-    const estadoNuevo = (estado || '').toLowerCase();
-    const idxActual = ESTADOS.indexOf(estadoActual);
+werCase();
+    const estadoActual = (proyecto.estado || '').toLowerCase();;
+    const estadoNuevo = (estado || '').toLowerCase(););
+    const idxActual = ESTADOS.indexOf(estadoActual);    const idxNuevo = ESTADOS.indexOf(estadoNuevo);
     const idxNuevo = ESTADOS.indexOf(estadoNuevo);
 
-    if (idxNuevo === -1) {
+    if (idxNuevo === -1) { return res.status(400).json({ mensaje: 'Estado no válido' });
       return res.status(400).json({ mensaje: 'Estado no válido' });
     }
-    if (idxNuevo > idxActual + 1 || idxNuevo < idxActual) {
-      return res.status(400).json({ mensaje: 'Transición de estado no permitida' });
+    if (idxNuevo > idxActual + 1 || idxNuevo < idxActual) { return res.status(400).json({ mensaje: 'Transición de estado no permitida' });
+      return res.status(400).json({ mensaje: 'Transición de estado no permitida' });    }
     }
 
-    const update = {
-      estado: estadoNuevo,
+    const update = {doNuevo,
+      estado: estadoNuevo,ion,
       observacion,
       $push: {
         historialestado: {
-          estado: estadoNuevo,
-          fecha: new Date().toISOString(),
-          observacion
-        }
-      }
+          estado: estadoNuevo,Date().toISOString(),
+          fecha: new Date().toISOString(), observacion
+          observacion }
+        }}
+      }    };
     };
-
-    const proyectoActualizado = await Proyecto.findByIdAndUpdate(id, update, { new: true, runValidators: true });
+nValidators: true });
+    const proyectoActualizado = await Proyecto.findByIdAndUpdate(id, update, { new: true, runValidators: true });nsaje: 'Estado actualizado exitosamente', proyecto: proyectoActualizado });
     res.json({ mensaje: 'Estado actualizado exitosamente', proyecto: proyectoActualizado });
   } catch (err) {
-    console.error('Error al actualizar estado:', err);
+    console.error('Error al actualizar estado:', err); res.status(500).json({ mensaje: 'Error al actualizar estado del proyecto', error: err.message });
     res.status(500).json({ mensaje: 'Error al actualizar estado del proyecto', error: err.message });
-  }
+  }});
 });
 
-export default router;
+
+export default router;export default router;

@@ -3,10 +3,12 @@ import mongoose from 'mongoose';
 const integranteSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   apellido: { type: String, required: true },
-  tipoidentificacion: { type: String, required: true },
+  tipoIdentificacion: { type: String, required: true },
   identificacion: { type: String, required: true },
   gradoEscolar: { type: String, required: true },
   correo: { type: String, required: true, lowercase: true },
+  observaciones: { type: String, default: '' },
+  estado: { type: String, default: 'activo' }
 }, { _id: false });
 
 const actividadSchema = new mongoose.Schema({
