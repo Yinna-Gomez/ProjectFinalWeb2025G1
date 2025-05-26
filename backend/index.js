@@ -35,30 +35,12 @@ const corsOptions = {
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
+
+// Middleware y configuración
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Rutas
-app.use('/api/auth', authRoutes);
-app.use('/api/usuarios', usuariosRoutes);
-app.use('/api/proyectos', proyectosRoutes);
-app.use('/api/proyectos', avancesRoutes);
-
-// Constantes de configuración
-const JWT_SECRET = process.env.JWT_SECRET;
-const REFRESH_SECRET = process.env.REFRESH_SECRET;
-const TOKEN_EXPIRATION = '1h';
-const REFRESH_EXPIRATION = '7d';
-
-// Almacén temporal de refresh tokens (en producción usar Redis)
-const refreshTokens = new Set();
-
-/**
- * Middleware para verificar el token JWT
- * @param {Object} req - Request object
- * @param {Object} res - Response object
- * @param {Function} next - Next middleware function
- */
+// Middleware para verificar token
 const verificarToken = (req, res, next) => {
   const token = req.headers['authorization']?.split(' ')[1];
   if (!token) {
@@ -73,6 +55,23 @@ const verificarToken = (req, res, next) => {
     return res.status(401).json({ mensaje: 'Token inválido' });
   }
 };
+
+// Rutas públicas
+app.use('/api/auth', authRoutes);
+
+// Rutas protegidas
+app.use('/api/usuarios', verificarToken, usuariosRoutes);
+app.use('/api/proyectos', verificarToken, proyectosRoutes);
+app.use('/api/proyectos', verificarToken, avancesRoutes);
+
+// Constantes de configuración
+const JWT_SECRET = process.env.JWT_SECRET;
+const REFRESH_SECRET = process.env.REFRESH_SECRET;
+const TOKEN_EXPIRATION = '1h';
+const REFRESH_EXPIRATION = '7d';
+
+// Almacén temporal de refresh tokens (en producción usar Redis)
+const refreshTokens = new Set();
 
 /**
  * Genera un nuevo token de acceso
@@ -191,82 +190,9 @@ app.post('/api/logout', (req, res) => {
   res.json({ message: 'Logout exitoso' });
 });
 
-// Rutas protegidas
-app.get('/api/usuarios', verificarToken, async (req, res) => {
-  const usuarios = await User.find({});
-  res.json(usuarios);
-});
-
-app.get('/api/proyectos', verificarToken, async (req, res) => {
-  try {
-    const proyectos = await Proyecto.find({})
-      .select({
-        titulo: 1,
-        area: 1,
-        objetivos: 1,
-        cronograma: 1,
-        presupuesto: 1,
-        institucion: 1,
-        integrantes: 1,
-        historialestado: 1,
-        avances: 1,
-        estado: 1,
-        observacion: 1,
-        creadoPor: 1
-      })
-      .lean();
-    
-    res.json(proyectos);
-  } catch (err) {
-    console.error('Error al obtener proyectos:', err);
-    res.status(500).json({ mensaje: 'Error al obtener proyectos' });
-  }
-});
-
-// Obtener un proyecto específico
-app.get('/api/proyectos/:id', verificarToken, async (req, res) => {
-  try {
-    const proyecto = await Proyecto.findById(req.params.id);
-    if (!proyecto) {
-      return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
-    }
-    res.json(proyecto);
-  } catch (err) {
-    res.status(500).json({ mensaje: 'Error al obtener el proyecto' });
-  }
-});
-
-// Actualizar el estado de un proyecto
-app.put('/api/proyectos/:id/estado', verificarToken, async (req, res) => {
-  const { id } = req.params;
-  let { estado, observacion } = req.body;
-  try {
-    const proyecto = await Proyecto.findById(id);
-    if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
-    
-    const ESTADOS = ['formulacion', 'evaluacion', 'activo', 'inactivo', 'finalizado'];
-    const estadoActual = (proyecto.estado || '').toLowerCase();
-    const estadoNuevo = (estado || '').toLowerCase();
-    const idxActual = ESTADOS.indexOf(estadoActual);
-    const idxNuevo = ESTADOS.indexOf(estadoNuevo);
-    
-    if (idxNuevo === -1 || idxNuevo > idxActual + 1 || idxNuevo < idxActual) {
-      return res.status(400).json({ mensaje: 'Transición de estado no permitida' });
-    }
-
-    proyecto.estado = estadoNuevo;
-    proyecto.observacion = observacion;
-    proyecto.historialestado.push({
-      estado: estadoNuevo,
-      fecha: new Date().toISOString(),
-      observacion
-    });
-
-    await proyecto.save();
-    res.json({ mensaje: 'Estado actualizado', proyecto });
-  } catch (err) {
-    res.status(500).json({ mensaje: 'Error al actualizar estado' });
-  }
+// Ruta raíz para verificación
+app.get('/', (req, res) => {
+  res.send('API corriendo correctamente');
 });
 
 // Crear usuario
@@ -346,6 +272,52 @@ app.post('/api/proyectos', verificarToken, async (req, res) => {
   }
 });
 
+// Obtener un proyecto específico
+app.get('/api/proyectos/:id', verificarToken, async (req, res) => {
+  try {
+    const proyecto = await Proyecto.findById(req.params.id);
+    if (!proyecto) {
+      return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+    }
+    res.json(proyecto);
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al obtener el proyecto' });
+  }
+});
+
+// Actualizar el estado de un proyecto
+app.put('/api/proyectos/:id/estado', verificarToken, async (req, res) => {
+  const { id } = req.params;
+  let { estado, observacion } = req.body;
+  try {
+    const proyecto = await Proyecto.findById(id);
+    if (!proyecto) return res.status(404).json({ mensaje: 'Proyecto no encontrado' });
+    
+    const ESTADOS = ['formulacion', 'evaluacion', 'activo', 'inactivo', 'finalizado'];
+    const estadoActual = (proyecto.estado || '').toLowerCase();
+    const estadoNuevo = (estado || '').toLowerCase();
+    const idxActual = ESTADOS.indexOf(estadoActual);
+    const idxNuevo = ESTADOS.indexOf(estadoNuevo);
+    
+    if (idxNuevo === -1 || idxNuevo > idxActual + 1 || idxNuevo < idxActual) {
+      return res.status(400).json({ mensaje: 'Transición de estado no permitida' });
+    }
+
+    proyecto.estado = estadoNuevo;
+    proyecto.observacion = observacion;
+    proyecto.historialestado.push({
+      estado: estadoNuevo,
+      fecha: new Date().toISOString(),
+      observacion
+    });
+
+    await proyecto.save();
+    res.json({ mensaje: 'Estado actualizado', proyecto });
+  } catch (err) {
+    res.status(500).json({ mensaje: 'Error al actualizar estado' });
+  }
+});
+
 // Log global para cada petición entrante
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
@@ -367,10 +339,6 @@ process.on('uncaughtException', (err) => {
 });
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Rechazo de promesa no manejado:', reason);
-});
-
-app.get('/', (req, res) => {
-  res.send('API corriendo correctamente');
 });
 
 app.listen(process.env.PORT || 3001, () => {

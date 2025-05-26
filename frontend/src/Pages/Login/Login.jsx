@@ -9,12 +9,14 @@ const Login = () => {
   const [usuario, setUsuario] = useState('');
   const [contrasenia, setContrasenia] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
     try {
       const res = await fetch(`${API_URL}/api/login`, {
@@ -23,20 +25,30 @@ const Login = () => {
         body: JSON.stringify({ usuario, contrasenia }),
       });
 
-      const data = await res.json();
-
-      if (res.ok) {
-        console.log('Datos de login recibidos:', data); // Para debug
-        // Usar la función login del contexto
-        login(data);
-        navigate('/visualiza');
-      } else {
-        setError(data.message || 'Error al iniciar sesión');
+      if (!res.ok) {
+        // Intenta leer el mensaje de error si existe
+        let errorMsg = 'Error en login';
+        try {
+          const data = await res.json();
+          errorMsg = data.message || errorMsg;
+        } catch {
+          // Si no hay JSON, deja el mensaje por defecto
+        }
+        setError(errorMsg);
+        setLoading(false);
+        return;
       }
+
+      const data = await res.json();
+      console.log('Datos de login recibidos:', data); // Para debug
+      // Usar la función login del contexto
+      login(data);
+      navigate('/visualiza');
     } catch (err) {
       console.error('Error en login:', err);
       setError('Error de conexión con el servidor');
     }
+    setLoading(false);
   };
 
   return (
@@ -63,8 +75,8 @@ const Login = () => {
               required
             />
           </div>
-          <button type="submit" className="login-btn">
-            Ingresar
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
         </form>
       </div>
