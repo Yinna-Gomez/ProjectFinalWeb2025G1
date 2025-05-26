@@ -197,11 +197,10 @@ const CreateProject = () => {
       area: project.area,
       institucion: project.institucion,
       objetivos: project.objetivos,
-      cronograma,
-      observaciones: project.observaciones,
+      cronograma, // debe ser array de actividades
+      observacion: project.observaciones, // <-- Cambia a singular y usa el valor del input
       integrantes,
       historialestado: [{ estado: 'formulacion', fecha: new Date().toISOString(), observacion: '' }],
-      archivos: [],
       estado: 'formulacion',
       creadoPor: usuarioActual || '',
     };
