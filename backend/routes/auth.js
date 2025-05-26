@@ -68,4 +68,4 @@ router.post('/logout', (req, res) => {
   res.json({ message: 'Logout exitoso' });
 });
 
-export default router; 
+export default router;
