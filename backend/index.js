@@ -273,6 +273,7 @@ app.post('/api/proyectos', verificarToken, async (req, res) => {
     await nuevoProyecto.save();
     res.status(201).json({ mensaje: 'Proyecto creado', proyecto: nuevoProyecto });
   } catch (err) {
+    console.error('Error al crear proyecto:', err); // <-- Esto ya lo tienes, revisa el log completo en Railway
     res.status(500).json({ mensaje: 'Error al crear proyecto', error: err.message });
   }
 });
