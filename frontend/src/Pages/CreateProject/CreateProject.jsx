@@ -189,6 +189,7 @@ const CreateProject = () => {
 
   // Confirma y envía el proyecto a la base de datos y los usuarios
   const handleConfirmarCrear = async () => {
+    console.log('handleConfirmarCrear ejecutado');
     setConfirmar(false);
     // Normaliza los campos de integrantes para que coincidan con el backend
     const integrantesNormalizados = integrantes.map(i => ({
