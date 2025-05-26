@@ -8,7 +8,7 @@ import HomgePage from './Pages/HomePage/HomePage';
 import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import DetailProject from './Pages/DetailProject/DetailProject';
 import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
-import GestionUsuarios from './Pages/GestionUsuarios/GestionUsuarios';
+import GestionUsuarios from './Pages/VisualizaPage/GestionUsuarios';
 import "./App.css";
 
 const App = () => {
