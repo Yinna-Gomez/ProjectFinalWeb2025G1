@@ -4,7 +4,7 @@ import { AuthProvider } from './Components/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Login from './Pages/Login/Login';
 import Unauthorized from './Pages/Unauthorized/Unauthorized';
-import HomgePage from './Pages/HomePage/HomgePage';
+import HomgePage from './Pages/HomePage/HomePage';
 import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import DetailProject from './Pages/DetailProject/DetailProject';
 import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
