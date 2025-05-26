@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
     try {
       // Intentar invalidar el refresh token en el servidor
       if (refreshToken) {
-        await fetch('http://localhost:3001/api/logout', {
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/logout`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ refreshToken })
@@ -62,11 +62,12 @@ export const AuthProvider = ({ children }) => {
 
   // Verificar token al cargar
   useEffect(() => {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
     const verificarToken = async () => {
       if (!token) return;
 
       try {
-        const res = await fetch('http://localhost:3001/api/verify-token', {
+        const res = await fetch(`${API_URL}/api/verify-token`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -74,7 +75,7 @@ export const AuthProvider = ({ children }) => {
 
         if (!res.ok) {
           // Si el token no es válido, intentar renovar
-          const refreshRes = await fetch('http://localhost:3001/api/refresh', {
+          const refreshRes = await fetch(`${API_URL}/api/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ refreshToken })

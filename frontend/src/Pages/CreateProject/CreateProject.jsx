@@ -35,6 +35,8 @@ const initialProject = {
   integrantes: [],
 };
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 const CreateProject = () => {
   // Estado del proyecto y de los integrantes
   const [project, setProject] = useState(initialProject);
@@ -126,7 +128,7 @@ const CreateProject = () => {
     let usuario, existe;
     do {
       usuario = 'est' + randomString(4);
-      existe = await fetch(`http://localhost:3001/api/usuarios/${usuario}`)
+      existe = await fetch(`${API_URL}/api/usuarios/${usuario}`)
         .then(res => res.ok ? res.json() : null)
         .catch(() => null);
     } while (existe);
@@ -205,7 +207,7 @@ const CreateProject = () => {
     };
     // Envía el proyecto a la colección proyectos
     const token = localStorage.getItem('token');
-    const res = await fetch('http://localhost:3001/api/proyectos', {
+    const res = await fetch(`${API_URL}/api/proyectos`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -216,7 +218,7 @@ const CreateProject = () => {
     if (res.ok) {
       // Envía cada usuario a la colección usuarios
       for (const usuario of usuariosTemp) {
-        await fetch('http://localhost:3001/api/usuarios', {
+        await fetch(`${API_URL}/api/usuarios`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(usuario),

@@ -12,16 +12,14 @@ const Login = () => {
   const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
     try {
       const res = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ usuario, contrasenia }),
       });
 
@@ -46,7 +44,7 @@ const Login = () => {
       <div className="login-form">
         <h2>Iniciar Sesión</h2>
         {error && <div className="login-error">{error}</div>}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div className="form-group">
             <label>Usuario:</label>
             <input

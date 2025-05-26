@@ -33,6 +33,7 @@ function randomString(length = 6) {
 }
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 const GestionUsuarios = () => {
   const [modo, setModo] = useState(''); // '', 'crear', 'editar', 'eliminar'
@@ -49,7 +50,7 @@ const GestionUsuarios = () => {
     let nuevoUsuario, existe;
     do {
       nuevoUsuario = 'user' + randomString(4);
-      existe = await fetch(`http://localhost:3001/api/usuarios/${nuevoUsuario}`)
+      existe = await fetch(`${API_URL}/api/usuarios/${nuevoUsuario}`)
         .then(res => res.ok ? res.json() : null)
         .catch(() => null);
     } while (existe);
@@ -100,7 +101,7 @@ const GestionUsuarios = () => {
       return;
     }
     try {
-      const res = await fetch('http://localhost:3001/api/usuarios', {
+      const res = await fetch(`${API_URL}/api/usuarios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
@@ -131,7 +132,7 @@ const GestionUsuarios = () => {
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`http://localhost:3001/api/usuarios/${valor}`);
+        const res = await fetch(`${API_URL}/api/usuarios/${valor}`);
         if (res.ok) {
           const data = await res.json();
           setForm(data);
@@ -166,7 +167,7 @@ const GestionUsuarios = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:3001/api/usuarios/${usuarioId}`, {
+      const res = await fetch(`${API_URL}/api/usuarios/${usuarioId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(datos),
@@ -197,7 +198,7 @@ const GestionUsuarios = () => {
       return;
     }
     try {
-      const res = await fetch(`http://localhost:3001/api/usuarios/${usuarioId}`, {
+      const res = await fetch(`${API_URL}/api/usuarios/${usuarioId}`, {
         method: 'DELETE',
       });
       if (res.ok) {
