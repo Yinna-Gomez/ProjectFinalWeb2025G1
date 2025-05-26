@@ -4,10 +4,11 @@ import { AuthProvider } from './Components/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Login from './Pages/Login/Login';
 import Unauthorized from './Pages/Unauthorized/Unauthorized';
+import HomePage from './Pages/HomePage/HomePage';
 import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import DetailProject from './Pages/DetailProject/DetailProject';
 import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
-import GestionUsuarios from './Pages/VisualizaPage/GestionUsuarios';
+import GestionUsuarios from './Pages/GestionUsuarios/GestionUsuarios';
 import "./App.css";
 
 const App = () => {
@@ -15,7 +16,8 @@ const App = () => {
     <Router>
       <AuthProvider>
         <Routes>
-          {/* Rutas públicas */}
+          {/* Página pública de inicio */}
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -57,8 +59,7 @@ const App = () => {
           />
 
           {/* Redirección por defecto */}
-          <Route path="/" element={<Navigate to="/visualiza" replace />} />
-          <Route path="*" element={<Navigate to="/visualiza" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </AuthProvider>
     </Router>
