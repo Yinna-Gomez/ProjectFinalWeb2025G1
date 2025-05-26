@@ -276,7 +276,7 @@ const DetailProject = () => {
                 </Grid>
               )}
 
-              {/* Botón de registrar avance para estudiantes/integrantes */}
+              {/* Botón de registrar avance para integrantes */}
               {rol === 'integrante' && (
                 <Grid item xs={12}>
                   <Divider sx={{ my: 3 }} />

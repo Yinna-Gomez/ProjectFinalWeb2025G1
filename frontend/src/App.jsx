@@ -4,7 +4,7 @@ import { AuthProvider } from './Components/AuthContext';
 import ProtectedRoute from './Components/ProtectedRoute';
 import Login from './Pages/Login/Login';
 import Unauthorized from './Pages/Unauthorized/Unauthorized';
-import HomePage from './Pages/HomePage/HomePage';
+import HomgePage from './Pages/HomePage/HomgePage';
 import VisualizaPage from './Pages/VisualizaPage/VisualizaPage';
 import DetailProject from './Pages/DetailProject/DetailProject';
 import SeguimientoPage from './Pages/SeguimientoPage/SeguimientoPage';
@@ -17,7 +17,7 @@ const App = () => {
       <AuthProvider>
         <Routes>
           {/* Página pública de inicio */}
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<HomgePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
 
@@ -43,7 +43,7 @@ const App = () => {
           <Route
             path="/seguimiento/:id"
             element={
-              <ProtectedRoute allowedRoles={['estudiante']}>
+              <ProtectedRoute allowedRoles={['integrante']}>
                 <SeguimientoPage />
               </ProtectedRoute>
             }

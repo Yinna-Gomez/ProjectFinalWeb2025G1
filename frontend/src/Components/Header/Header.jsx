@@ -40,7 +40,7 @@ const Header = () => {
       navigate('/visualiza');
     } else if (rol === 'integrante') {
       const correo = localStorage.getItem('correo')?.toLowerCase();
-      // Los estudiantes serán redirigidos automáticamente desde VisualizaPage
+      // Los integrantes serán redirigidos automáticamente desde VisualizaPage
       navigate('/visualiza');
     }
   };
