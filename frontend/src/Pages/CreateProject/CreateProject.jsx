@@ -190,22 +190,33 @@ const CreateProject = () => {
   // Confirma y envía el proyecto a la base de datos y los usuarios
   const handleConfirmarCrear = async () => {
     setConfirmar(false);
-    // Prepara el objeto proyecto para la base de datos
+    // Normaliza los campos de integrantes para que coincidan con el backend
+    const integrantesNormalizados = integrantes.map(i => ({
+      nombre: i.nombre,
+      apellido: i.apellido,
+      tipoIdentificacion: i.tipoidentificacion, // backend espera tipoIdentificacion
+      identificacion: i.identificacion,
+      gradoEscolar: i.gradoEscolar,
+      correo: i.correo,
+      observaciones: i.observaciones,
+      estado: i.estado,
+    }));
+
     const proyectoData = {
       titulo: project.titulo,
       presupuesto: project.presupuesto,
       area: project.area,
       institucion: project.institucion,
       objetivos: project.objetivos,
-      cronograma,
+      cronograma, // array de actividades
       observacion: project.observaciones,
-      integrantes,
+      integrantes: integrantesNormalizados,
       historialestado: [{ estado: 'formulacion', fecha: new Date().toISOString(), observacion: '' }],
       estado: 'formulacion',
       creadoPor: usuarioActual || '',
     };
 
-    console.log('Enviando proyectoData:', proyectoData); // <-- Agregado para depuración
+    console.log('Enviando proyectoData:', proyectoData);
 
     // Envía el proyecto a la colección proyectos
     const token = localStorage.getItem('token');
