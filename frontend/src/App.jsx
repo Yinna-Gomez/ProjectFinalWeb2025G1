@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './Components/AuthContext';
 import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
-import HomgePage from "./Pages/HomePage/HomePage";
+import HomePage from "./Pages/HomePage/HomePage";
 import SeguimientoPage from "./Pages/SeguimientoPage/SeguimientoPage";
 import Login from "./Pages/Login/Login";
 import CreateProject from "./Pages/CreateProject/CreateProject";
@@ -36,7 +36,7 @@ function App() {
           <Header />
           <main>
             <Routes>
-              <Route path="/" element={<HomgePage />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/login" element={<Login />} />
               {/* Ruta para estudiantes */}
               <Route 
