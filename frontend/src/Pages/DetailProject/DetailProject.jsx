@@ -59,6 +59,7 @@ const DetailProject = () => {
         setProyecto(data);
       } catch (error) {
         setError('Error al cargar el proyecto');
+        console.error(error);
       } finally {
         setLoading(false);
       }

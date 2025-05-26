@@ -8,22 +8,9 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: process.env.VITE_API_URL,
+        target: 'http://localhost:3001',
         changeOrigin: true,
-        secure: false
-      }
-    }
-  },
-  build: {
-    outDir: 'dist',
-    sourcemap: false,
-    minify: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          mui: ['@mui/material', '@mui/icons-material']
-        }
+        secure: false,
       }
     }
   },

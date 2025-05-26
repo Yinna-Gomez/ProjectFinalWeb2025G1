@@ -116,10 +116,10 @@ function VisualizaPage() {
     }
   }, [rol, navigate]);
 
-  // Redirección si es integrante y carga de proyectos
+  // Redirección si es estudiante y carga de proyectos
   useEffect(() => {
     if (rol === 'integrante' && proyectos.length > 0) {
-      console.log('Buscando proyectos para integrante:', correo);
+      console.log('Buscando proyectos para estudiante:', correo);
       const misProyectos = proyectos.filter(p => 
         p.integrantes && p.integrantes.some(i => 
           i.correo?.toLowerCase() === correo?.toLowerCase()
@@ -127,7 +127,7 @@ function VisualizaPage() {
       );
       
       if (misProyectos.length === 0) {
-        console.log('No se encontraron proyectos para el integrante');
+        console.log('No se encontraron proyectos para el estudiante');
         setError('No tienes ningún proyecto asignado. Por favor, contacta a tu docente.');
       } else {
         setError('');
@@ -159,7 +159,7 @@ function VisualizaPage() {
         const data = await res.json();
         setProyectos(data);
 
-        // Verificar proyectos para integrantes
+        // Verificar proyectos para estudiantes
         if (rol === 'integrante') {
           const misProyectos = data.filter(p => 
             p.integrantes && p.integrantes.some(i => i.correo?.toLowerCase() === correo?.toLowerCase())
@@ -314,7 +314,7 @@ function VisualizaPage() {
               </div>
             );
           } else {
-            // Para docente y integrante: el recuadro completo es clickeable
+            // Para docente y estudiante: el recuadro completo es clickeable
             return (
               <div
                 key={proy._id}
@@ -394,7 +394,7 @@ function VisualizaPage() {
             {renderProyectos(proyectosFiltrados)}
           </div>
         ) : rol === 'integrante' ? (
-          // Solo mis proyectos para integrantes
+          // Solo mis proyectos para estudiantes
           <div className="visualiza-tab-content">
             {renderProyectos(proyectosFiltrados)}
           </div>

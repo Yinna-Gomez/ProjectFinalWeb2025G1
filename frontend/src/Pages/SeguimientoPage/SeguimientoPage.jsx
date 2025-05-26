@@ -50,6 +50,7 @@ const SeguimientoPage = () => {
         setProyecto(data);
       } catch (error) {
         setError('Error al cargar el proyecto');
+        console.error(error);
       }
     };
 
@@ -125,6 +126,7 @@ const SeguimientoPage = () => {
       setProyecto(data);
     } catch (error) {
       setError('Error al registrar el avance: ' + error.message);
+      console.error('Error completo:', error);
     } finally {
       setLoading(false);
     }

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider } from './Components/AuthContext';
 import Header from "./Components/Header/Header";
 import Footer from "./Components/Footer/Footer";
-import HomePage from "./Pages/HomePage/HomePage";
+import HomgePage from "./Pages/HomePage/HomgePage";
 import SeguimientoPage from "./Pages/SeguimientoPage/SeguimientoPage";
 import Login from "./Pages/Login/Login";
 import CreateProject from "./Pages/CreateProject/CreateProject";
@@ -36,8 +36,9 @@ function App() {
           <Header />
           <main>
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<HomgePage />} />
               <Route path="/login" element={<Login />} />
+              
               {/* Ruta para estudiantes */}
               <Route 
                 path="/seguimiento" 
@@ -47,6 +48,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+
               {/* Ruta para visualización de proyectos */}
               <Route 
                 path="/visualiza" 
@@ -56,6 +58,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+
               {/* Ruta para crear proyectos (solo docentes) */}
               <Route 
                 path="/createproject" 
@@ -65,6 +68,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+
               {/* Ruta para detalles del proyecto */}
               <Route 
                 path="/detailproject/:id" 
@@ -74,6 +78,7 @@ function App() {
                   </ProtectedRoute>
                 } 
               />
+
               {/* Ruta para agregar miembros */}
               <Route 
                 path="/addmember" 

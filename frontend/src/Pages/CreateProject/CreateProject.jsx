@@ -16,8 +16,6 @@ import { AuthContext } from '../../Components/AuthContext';
 import CronogramaModal from './CronogramaModal';
 import './CronogramaModal.css';
 
-const API_URL = import.meta.env.VITE_API_URL;
-
 // Utilidad para generar usuario y contraseña aleatorios
 function randomString(length = 6) {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -128,7 +126,7 @@ const CreateProject = () => {
     let usuario, existe;
     do {
       usuario = 'est' + randomString(4);
-      existe = await fetch(`${API_URL}/api/usuarios/${usuario}`)
+      existe = await fetch(`http://localhost:3001/api/usuarios/${usuario}`)
         .then(res => res.ok ? res.json() : null)
         .catch(() => null);
     } while (existe);
@@ -207,7 +205,7 @@ const CreateProject = () => {
     };
     // Envía el proyecto a la colección proyectos
     const token = localStorage.getItem('token');
-    const res = await fetch(`${API_URL}/api/proyectos`, {
+    const res = await fetch('http://localhost:3001/api/proyectos', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -218,7 +216,7 @@ const CreateProject = () => {
     if (res.ok) {
       // Envía cada usuario a la colección usuarios
       for (const usuario of usuariosTemp) {
-        await fetch(`${API_URL}/api/usuarios`, {
+        await fetch('http://localhost:3001/api/usuarios', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(usuario),
