@@ -230,7 +230,12 @@ const CreateProject = () => {
       setUsuariosTemp([]);
       setCronograma([]);
     } else {
-      setError('No se pudo crear el proyecto');
+      let errorMsg = 'No se pudo crear el proyecto';
+      try {
+        const data = await res.json();
+        errorMsg = data.mensaje || data.error || errorMsg;
+      } catch {}
+      setError(errorMsg);
     }
   };
 
