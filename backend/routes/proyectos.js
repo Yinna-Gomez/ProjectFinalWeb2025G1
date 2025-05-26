@@ -102,4 +102,4 @@ router.put('/:id/estado', verificarToken, async (req, res) => {
   }
 });
 
-export default router; 
+export default router;

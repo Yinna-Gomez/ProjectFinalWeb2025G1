@@ -5,24 +5,10 @@ import cloudinary from '../config/cloudinary.js';
 import fs from 'fs';
 import { promisify } from 'util';
 import path from 'path';
-import jwt from 'jsonwebtoken';
+import { verificarToken } from '../middleware/auth.js';
 
 const unlinkAsync = promisify(fs.unlink);
 const router = express.Router();
-
-// Middleware para verificar el token JWT
-const verificarToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1];
-  if (!token) return res.status(401).json({ mensaje: 'Token no proporcionado' });
-  
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuario = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ mensaje: 'Token inválido' });
-  }
-};
 
 // Middleware para verificar si el usuario es parte del proyecto
 const verificarMiembroProyecto = async (req, res, next) => {
@@ -146,4 +132,4 @@ router.post('/:proyectoId/avances', verificarToken, verificarMiembroProyecto, up
   }
 });
 
-export default router; 
+export default router;
